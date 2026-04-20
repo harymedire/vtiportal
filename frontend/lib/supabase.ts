@@ -1,0 +1,94 @@
+import { createClient } from "@supabase/supabase-js";
+import type { Article, ArticleListItem } from "./types";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY");
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: { persistSession: false },
+});
+
+const LIST_SELECT =
+  "id,title,slug,subtitle,category,thumbnail_url,hero_image_url,published_at,views";
+
+export async function getLatestArticles(limit = 30): Promise<ArticleListItem[]> {
+  const { data, error } = await supabase
+    .from("articles")
+    .select(LIST_SELECT)
+    .eq("status", "published")
+    .order("published_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data || []) as ArticleListItem[];
+}
+
+export async function getArticlesByCategory(
+  category: string,
+  limit = 30
+): Promise<ArticleListItem[]> {
+  const { data, error } = await supabase
+    .from("articles")
+    .select(LIST_SELECT)
+    .eq("status", "published")
+    .eq("category", category)
+    .order("published_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data || []) as ArticleListItem[];
+}
+
+export async function getArticleBySlug(slug: string): Promise<Article | null> {
+  const { data, error } = await supabase
+    .from("articles")
+    .select("*")
+    .eq("slug", slug)
+    .eq("status", "published")
+    .maybeSingle();
+  if (error) throw error;
+  return (data as Article) || null;
+}
+
+export async function getRelatedArticles(
+  category: string,
+  excludeId: string,
+  limit = 3
+): Promise<ArticleListItem[]> {
+  const { data, error } = await supabase
+    .from("articles")
+    .select(LIST_SELECT)
+    .eq("status", "published")
+    .eq("category", category)
+    .neq("id", excludeId)
+    .order("published_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data || []) as ArticleListItem[];
+}
+
+export async function getMostRead(limit = 5): Promise<ArticleListItem[]> {
+  const { data, error } = await supabase
+    .from("articles")
+    .select(LIST_SELECT)
+    .eq("status", "published")
+    .order("views", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data || []) as ArticleListItem[];
+}
+
+export async function getAllSlugsForSitemap(): Promise<
+  { slug: string; category: string; published_at: string }[]
+> {
+  const { data, error } = await supabase
+    .from("articles")
+    .select("slug,category,published_at")
+    .eq("status", "published")
+    .order("published_at", { ascending: false })
+    .limit(2000);
+  if (error) throw error;
+  return data || [];
+}

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Svekrva je došla na ručak, a kad sam vidjela šta stavlja u tašnu... | PričeDana</title>
+<meta name="description" content="Mislila sam da poznajem svoju svekrvu, dok jednog nedjeljnog ručka nisam primijetila nešto što je promijenilo sve između nas.">
+<style>
+  /* ===== RESET ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: #f4f4f4;
+    color: #1a1a1a;
+    font-size: 17px;
+    line-height: 1.75;
+  }
+  a { color: #1a73e8; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ===== HEADER ===== */
+  #site-header {
+    background: #fff;
+    border-bottom: 2px solid #e0e0e0;
+    padding: 12px 0;
+  }
+  #site-header .inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: #111;
+    letter-spacing: -0.5px;
+    cursor: pointer;
+  }
+  .logo span { color: #1a73e8; }
+  #site-header nav a {
+    margin-left: 18px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #555;
+    font-weight: 600;
+  }
+
+  /* ===== AD PLACEHOLDERS ===== */
+  .ad-box {
+    background: #fff;
+    border: 1px dashed #c9c9c9;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    position: relative;
+  }
+  .ad-box::before {
+    content: "OGLAS";
+    position: absolute;
+    top: 3px; left: 8px;
+    font-size: 9px; color: #999;
+  }
+  .ad-leaderboard  { width: 100%; height: 90px;  margin: 16px 0; }
+  .ad-rectangle    { width: 100%; height: 250px; margin: 20px 0; }
+  .ad-sidebar-top  { width: 100%; height: 250px; margin-bottom: 20px; }
+  .ad-sidebar-big  { width: 100%; height: 600px; }
+  .ad-inline       { width: 100%; height: 100px; margin: 18px 0; }
+
+  /* ===== LAYOUT ===== */
+  .top-ad-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+  #page-wrap {
+    max-width: 900px;
+    margin: 8px auto 24px;
+    padding: 0 16px;
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 24px;
+  }
+  #main { min-width: 0; }
+  #sidebar { min-width: 0; }
+
+  /* ===== ARTICLE META ===== */
+  .breadcrumb {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .breadcrumb span { margin: 0 6px; color: #ccc; }
+
+  .article-title {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 10px;
+    font-family: 'Georgia', serif;
+    color: #111;
+  }
+  .article-subtitle {
+    font-size: 17px;
+    color: #555;
+    font-style: italic;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .article-meta {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .article-meta strong { color: #555; }
+  .category-tag {
+    display: inline-block;
+    background: #1a73e8;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ===== HERO IMAGE (sa clickbait overlay) ===== */
+  .hero-image {
+    position: relative;
+    width: 100%;
+    height: 360px;
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 50%, #1a1a2e 100%);
+    margin-bottom: 20px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .hero-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.5) 100%);
+  }
+  .hero-overlay-text {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-family: 'Arial Black', Arial, sans-serif;
+    font-size: 44px;
+    font-weight: 900;
+    color: #ffd700;
+    text-shadow: -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000;
+    letter-spacing: 1px;
+    z-index: 2;
+    line-height: 1;
+  }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress-label {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .progress-label .read-time {
+    color: #aaa;
+  }
+  .progress-wrap {
+    background: #e8e8e8;
+    border-radius: 10px;
+    height: 6px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: #1a73e8;
+    border-radius: 10px;
+    transition: width 0.4s ease;
+  }
+
+  /* ===== SLIDES ===== */
+  .slide { display: none; }
+  .slide.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .slide-badge {
+    display: inline-block;
+    background: #eff6ff;
+    color: #1a73e8;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 12px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    border: 1px solid #d6e4ff;
+  }
+
+  .slide p {
+    margin-bottom: 16px;
+    color: #2a2a2a;
+  }
+  .slide p:first-of-type::first-letter {
+    font-size: 48px;
+    font-weight: bold;
+    float: left;
+    line-height: 0.9;
+    padding: 6px 10px 0 0;
+    color: #1a73e8;
+    font-family: Georgia, serif;
+  }
+
+  .slide-hook {
+    margin-top: 18px;
+    padding: 14px 16px;
+    background: #fffbea;
+    border-left: 3px solid #f59e0b;
+    font-style: italic;
+    color: #78350f;
+    font-size: 15px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* ===== NAVIGATION ===== */
+  .nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 22px;
+  }
+  .btn-prev, .btn-next {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-prev {
+    background: #e8e8e8;
+    color: #555;
+    padding: 14px 20px;
+    font-size: 15px;
+    min-width: 90px;
+  }
+  .btn-prev:hover:not(:disabled) { background: #d0d0d0; }
+  .btn-prev:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .slide-counter {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: #888;
+    white-space: nowrap;
+    padding: 0 6px;
+  }
+
+  .btn-next {
+    background: #1a73e8;
+    color: #fff;
+    flex: 1;
+    padding: 16px 20px;
+    font-size: 17px;
+    box-shadow: 0 2px 0 #1558b0;
+  }
+  .btn-next:hover { background: #1558b0; transform: translateY(-1px); }
+  .btn-next:active { transform: translateY(1px); box-shadow: none; }
+
+  /* ===== MORAL BOX (poslednji slide) ===== */
+  .moral-box {
+    background: #e8f0fe;
+    border-left: 4px solid #1a73e8;
+    padding: 18px 20px;
+    margin: 24px 0;
+    border-radius: 0 4px 4px 0;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    color: #333;
+    line-height: 1.55;
+  }
+  .moral-box strong { color: #1a73e8; display: block; margin-bottom: 6px; }
+
+  /* ===== RELATED ===== */
+  .related-section {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 18px;
+    margin-top: 24px;
+  }
+  .related-section h3 {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #1a73e8;
+    border-bottom: 2px solid #1a73e8;
+    padding-bottom: 8px;
+    margin-bottom: 14px;
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .related-item { cursor: pointer; }
+  .related-item .thumb {
+    height: 100px;
+    background: linear-gradient(135deg, #7f1d1d, #991b1b);
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  .related-item:nth-child(2) .thumb { background: linear-gradient(135deg, #1e40af, #1e3a8a); }
+  .related-item:nth-child(3) .thumb { background: linear-gradient(135deg, #166534, #14532d); }
+  .related-item h4 {
+    font-family: 'Georgia', serif;
+    font-size: 14px;
+    line-height: 1.35;
+    color: #222;
+  }
+  .related-item:hover h4 { color: #1a73e8; }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar-widget {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 14px;
+    margin-bottom: 18px;
+  }
+  .sidebar-widget h3 {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+  }
+  .sidebar-widget ul { list-style: none; }
+  .sidebar-widget ul li {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-family: 'Georgia', serif;
+    font-size: 14px;
+    line-height: 1.35;
+  }
+  .sidebar-widget ul li:last-child { border-bottom: none; }
+  .sidebar-widget ul li a { color: #222; }
+  .sidebar-widget ul li a:hover { color: #1a73e8; }
+  .sticky-ad { position: sticky; top: 16px; }
+
+  /* ===== FOOTER ===== */
+  #site-footer {
+    background: #fff;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 40px;
+    padding: 22px 0;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #888;
+  }
+  #site-footer a { color: #555; margin: 0 10px; }
+  #site-footer .disclaimer {
+    max-width: 700px;
+    margin: 10px auto 0;
+    font-size: 11px;
+    color: #aaa;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* ===================== RESPONSIVE — EXTRA SIMPLE MOBILE ===================== */
+  @media (max-width: 700px) {
+    body { font-size: 16px; }
+
+    #site-header .inner { padding: 0 12px; }
+    #site-header nav { display: none; }  /* sakri nav na mobile */
+
+    #page-wrap {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 0 12px;
+    }
+    #sidebar { display: none; }  /* sakri cijeli sidebar na mobile, max fokus na sadržaj + oglase */
+
+    .article-title { font-size: 22px; line-height: 1.28; }
+    .article-subtitle { font-size: 15px; }
+
+    .hero-image { height: 220px; }
+    .hero-overlay-text { font-size: 28px; top: 14px; left: 14px; }
+
+    .slide p:first-of-type::first-letter {
+      font-size: 40px; padding: 4px 8px 0 0;
+    }
+
+    /* Dugmad veća i lakše pogađanje prstom */
+    .btn-next {
+      padding: 18px 14px;
+      font-size: 17px;
+    }
+    .btn-prev {
+      padding: 16px 12px;
+      font-size: 14px;
+      min-width: 72px;
+    }
+
+    .related-grid { grid-template-columns: 1fr; }
+
+    .breadcrumb { font-size: 11px; }
+
+    #site-footer { padding: 18px 12px; }
+    #site-footer a { display: inline-block; margin: 4px 8px; }
+  }
+
+  /* mobile 360px i manje — ekstremno simplifikovano */
+  @media (max-width: 400px) {
+    .nav-buttons { flex-wrap: wrap; }
+    .slide-counter { order: -1; width: 100%; text-align: center; padding: 4px 0; }
+  }
+
+  /* sticky mobilni oglas na dnu */
+  .mobile-sticky-ad {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #fff;
+    border-top: 1px solid #e0e0e0;
+    padding: 6px;
+    z-index: 100;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+  }
+  .mobile-sticky-ad .ad-box {
+    height: 50px; margin: 0;
+    border: 1px dashed #c9c9c9;
+  }
+  @media (max-width: 700px) {
+    .mobile-sticky-ad { display: block; }
+    body { padding-bottom: 68px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header id="site-header">
+  <div class="inner">
+    <div class="logo">Priče<span>Dana</span></div>
+    <nav>
+      <a href="#">Ispovijesti</a>
+      <a href="#">Komšiluk</a>
+      <a href="#">Smijeh</a>
+      <a href="#">Drame</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ========== TOP LEADERBOARD AD ========== -->
+<div class="top-ad-wrap">
+  <div class="ad-box ad-leaderboard">Reklama · 728×90</div>
+</div>
+
+<!-- ========== PAGE ========== -->
+<div id="page-wrap">
+
+  <!-- ========== MAIN ========== -->
+  <main id="main">
+
+    <div class="breadcrumb">
+      <a href="#">Početna</a><span>›</span>
+      <a href="#">Ispovijesti</a><span>›</span>
+      <span>Svekrva i tašna</span>
+    </div>
+
+    <span class="category-tag">ISPOVIJEST</span>
+
+    <h1 class="article-title">Svekrva je došla na ručak, a kad sam pogledala šta stavlja u tašnu — ostala sam bez riječi</h1>
+
+    <p class="article-subtitle">Mislila sam da poznajem svoju svekrvu. 15 godina smo u rodbinskom odnosu. A onda jedne nedjelje, dok sam sređivala kuhinju, primijetila sam nešto što je promijenilo sve.</p>
+
+    <div class="article-meta">
+      Objavljeno: <strong>20. april 2026.</strong> &nbsp;·&nbsp;
+      Autor: <strong>Redakcija</strong> &nbsp;·&nbsp;
+      Čitanje: <strong>~4 min</strong> &nbsp;·&nbsp;
+      <strong>8.421</strong> pregleda
+    </div>
+
+    <!-- HERO IMAGE sa clickbait overlay -->
+    <div class="hero-image">
+      <div class="hero-overlay-text">OSTALA SAM<br>BEZ RIJEČI</div>
+    </div>
+
+    <!-- Progress + slide info -->
+    <div class="progress-label">
+      <span id="progress-text">Stranica 1 od 5</span>
+      <span class="read-time">45s do sljedeće</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progress-bar" style="width:20%"></div>
+    </div>
+
+    <!-- Oglas prije sadržaja -->
+    <div class="ad-box ad-rectangle">Reklama · 300×250</div>
+
+    <!-- ========== SLIDES ========== -->
+
+    <div class="slide active" id="slide-1">
+      <div class="slide-badge">1 od 5 · Uvod</div>
+
+      <p>Moja svekrva Emina i ja nikad nismo bile jako bliske, ali odnos nam je bio korektan. Dolazila je na nedjeljne ručkove, pitala kako su djeca, hvalila kako sam napravila sarmu — onako kako se to radi. Nikad nije prelazila granicu, nikad se nije miješala u naš brak. Bila sam, iskreno, zahvalna za to.</p>
+
+      <p>Prije dvije godine, kad joj je preminuo suprug, primijetila sam da se promijenila. Nosila je iste haljine više puta, šišala se sama kod kuće, uvijek je insistirala da jede "samo malo" iako je očigledno bila gladna. Muž mi je rekao da ne pravim problem od toga — "mama je uvijek bila štedljiva".</p>
+
+      <div class="slide-hook">📌 A onda, ona nedjelja u martu, promijenila je sve što sam mislila da znam.</div>
+    </div>
+
+    <div class="slide" id="slide-2">
+      <div class="slide-badge">2 od 5 · Razvoj</div>
+
+      <p>Bio je običan nedjeljni ručak. Ja u kuhinji, muž u dnevnoj sobi sa djecom, svekrva na balkonu puši svoju tanku cigaretu. Sve kao i uvijek. Kad je došlo vrijeme da sjednemo za sto, donijela sam punu zdjelu goveđe juhe. Ona je pojela svoje, pohvalila, kao i uvijek rekla da previše jede.</p>
+
+      <div class="ad-box ad-inline">Reklama · 728×90 in-article</div>
+
+      <p>Poslije ručka, dok su djeca gledala crtane a muž se bavio nekim pozivom, primijetila sam da Emina stoji pored šporeta. Leđima mi okrenuta. Njena tašna — ona stara, smeđa kožna tašna koju nosi već godinama — bila je otvorena.</p>
+
+      <p>Unutra je stavljala nešto. Brzo. Kao da ne želi da je neko vidi.</p>
+    </div>
+
+    <div class="slide" id="slide-3">
+      <div class="slide-badge">3 od 5 · Obrt</div>
+
+      <p>Stomak mi se stegnuo. Prva pomisao — ne, nema šanse. Moja svekrva ne krade. Odmah sam se postidjela što mi je to uopšte palo na pamet. Ali bila je tu. Nešto je stavljala. Brzo sam se vratila u dnevnu sobu, pretvarajući se da ništa nisam vidjela.</p>
+
+      <div class="ad-box ad-inline">Reklama · 728×90 in-article</div>
+
+      <p>Te večeri nisam mogla spavati. Nisam rekla mužu — šta da mu kažem? Da mislim da mu mama nešto krade iz moje kuhinje? Ponižavajuće i za nju i za njega. Ali morala sam saznati.</p>
+
+      <p>Sljedeće nedjelje, kad je došla, pretvarala sam se da sam zaboravila nešto u kuhinji. Otišla sam tamo pod izgovorom, a zapravo sam kroz odškrinuta vrata gledala. I vidjela sam ono što nisam očekivala.</p>
+    </div>
+
+    <div class="slide" id="slide-4">
+      <div class="slide-badge">4 od 5 · Otkriće</div>
+
+      <p>U svojoj tašni, Emina je stavljala — ostatke hrane. Ne u kesi. Ne u kutiji. Nego uvijenu u salvete. Komadić pečenog mesa. Dvije ječmene pite. Malo sira. Sve urednije od moje uredne uredne, ali sakriveno.</p>
+
+      <div class="ad-box ad-inline">Reklama · 728×80 in-article</div>
+
+      <p>Ne kradža. Poniženje.</p>
+
+      <p>U tom trenu sam shvatila. Ona penzija od 430 KM, rata kredita za stan 180, režije, lijekovi, cigarete koje pokušava da prestane ali ne uspijeva. Ono "samo malo jedem" nije bila štedljivost — bila je to igra koju je igrala sama sa sobom jer ne može priznati ni sebi ni nama da joj treba hrana.</p>
+
+      <p>Uvukla sam se nazad u dnevnu sobu sa knedlom u grlu.</p>
+    </div>
+
+    <div class="slide" id="slide-5">
+      <div class="slide-badge">5 od 5 · Pouka</div>
+
+      <p>Nisam rekla ništa. Ni njoj. Ni mužu. Tu noć sam legla i samo plakala tiho, krivila sebe što 15 godina nisam vidjela ženu koja sjedi preko puta mog stola. Gledala sam je, ali nisam je vidjela.</p>
+
+      <p>Sljedeće nedjelje sam napravila duplo više hrane. "Eminka, imam toliko ostataka, nema ko da ih pojede, možeš li ti ponijeti? Nemoj da baca, grijeh je." Pogledala me je, i u njenim očima sam vidjela nešto što nikad prije nisam vidjela — zahvalnost. I sramotu. I olakšanje.</p>
+
+      <p>Od tada svake nedjelje pakujem kutiju. "Za Nešu" kažem, kao da mi je žao psa. Ona uzima, ne kaže hvala jer obje znamo da bi joj taj trenutak slomio ono malo ponosa što joj je ostalo.</p>
+
+      <div class="moral-box">
+        <strong>Pouka priče</strong>
+        Ljudi u našem životu često nose terete koje ni ne slutimo. Ponekad najveća ljubav nije riječ pohvale ni poklon — nego tihi, diskretni način da nekome olakšaš teret, a da mu ne oduzmeš dostojanstvo.
+      </div>
+
+      <p style="font-size:14px;color:#666;font-style:italic;text-align:center;margin-top:20px;">
+        * Priča inspirisana istinitim životnim situacijama. Imena i detalji su izmijenjeni radi zaštite privatnosti.
+      </p>
+    </div>
+
+    <!-- ========== NAVIGATION ========== -->
+    <div class="nav-buttons">
+      <button class="btn-prev" id="btn-prev" onclick="changePage(-1)" disabled>← Nazad</button>
+      <span class="slide-counter" id="slide-counter">1 / 5</span>
+      <button class="btn-next" id="btn-next" onclick="changePage(1)">Sljedeće →</button>
+    </div>
+
+    <!-- Bottom ad -->
+    <div class="ad-box ad-rectangle" style="margin-top:26px;">Reklama · 300×250</div>
+
+    <!-- Related articles -->
+    <div class="related-section">
+      <h3>📖 Pročitaj još</h3>
+      <div class="related-grid">
+        <div class="related-item">
+          <div class="thumb"></div>
+          <h4>Muž je zaboravio telefon kod kuće — poruka koju sam vidjela sve je promijenila</h4>
+        </div>
+        <div class="related-item">
+          <div class="thumb"></div>
+          <h4>Komšinica koju smo osuđivali godinama — kad sam saznala istinu, stidjela sam se</h4>
+        </div>
+        <div class="related-item">
+          <div class="thumb"></div>
+          <h4>20 godina braka, a ono što sam našla u njegovom ormaru...</h4>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside id="sidebar">
+    <div class="ad-box ad-sidebar-top">Reklama · 300×250</div>
+
+    <div class="sidebar-widget">
+      <h3>🔥 Najčitanije</h3>
+      <ul>
+        <li><a href="#">Muž se vratio sa puta dan ranije i vidio šta se dešava</a></li>
+        <li><a href="#">Naša kći se udala — ono što je svekrva rekla na svadbi</a></li>
+        <li><a href="#">Nakon 30 godina braka otvorila sam njegov stari sanduk</a></li>
+        <li><a href="#">Komšija koji nikad ne pozdravlja — njegova priča me rasplakala</a></li>
+        <li><a href="#">Baka mi je pred smrt rekla tajnu koja je promijenila sve</a></li>
+      </ul>
+    </div>
+
+    <div class="sticky-ad">
+      <div class="ad-box ad-sidebar-big">Reklama · 300×600</div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ========== FOOTER ========== -->
+<footer id="site-footer">
+  <div>
+    <a href="#">O nama</a>
+    <a href="#">Kontakt</a>
+    <a href="#">Politika privatnosti</a>
+    <a href="#">Uslovi korištenja</a>
+    <a href="#">Oglašavanje</a>
+  </div>
+  <div style="margin-top:10px;">© 2026 PričeDana.com · Sva prava zadržana</div>
+  <div class="disclaimer">
+    Priče objavljene u rubrici "Ispovijesti" i "Drame uz kafu" inspirisane su stvarnim životnim situacijama.
+    Imena, likovi i detalji su izmijenjeni ili izmišljeni radi zaštite privatnosti.
+  </div>
+</footer>
+
+<!-- ========== MOBILE STICKY AD ========== -->
+<div class="mobile-sticky-ad">
+  <div class="ad-box">Reklama · 320×50 mobile</div>
+</div>
+
+<script>
+  const TOTAL = 5;
+  let current = 1;
+
+  function changePage(dir) {
+    const next = current + dir;
+    if (next < 1 || next > TOTAL) return;
+
+    document.getElementById('slide-' + current).classList.remove('active');
+    current = next;
+    document.getElementById('slide-' + current).classList.add('active');
+
+    // Update progress
+    const pct = (current / TOTAL) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('progress-text').textContent = 'Stranica ' + current + ' od ' + TOTAL;
+    document.getElementById('slide-counter').textContent = current + ' / ' + TOTAL;
+
+    // Update buttons
+    document.getElementById('btn-prev').disabled = (current === 1);
+    const btnNext = document.getElementById('btn-next');
+    if (current === TOTAL) {
+      btnNext.textContent = '✓ Kraj priče — Pročitaj još';
+      btnNext.onclick = function() {
+        document.querySelector('.related-section').scrollIntoView({ behavior: 'smooth' });
+      };
+    } else {
+      btnNext.textContent = 'Sljedeće →';
+      btnNext.onclick = function() { changePage(1); };
+    }
+
+    // Scroll to top of article
+    document.getElementById('main').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Update URL without reload (SEO friendly)
+    history.pushState(null, '', '?strana=' + current);
+  }
+
+  // Support back/forward browser buttons
+  window.addEventListener('popstate', function() {
+    const params = new URLSearchParams(window.location.search);
+    const target = parseInt(params.get('strana')) || 1;
+    if (target !== current && target >= 1 && target <= TOTAL) {
+      changePage(target - current);
+    }
+  });
+
+  // Load initial page from URL
+  (function loadInitial() {
+    const params = new URLSearchParams(window.location.search);
+    const target = parseInt(params.get('strana'));
+    if (target && target > 1 && target <= TOTAL) {
+      changePage(target - 1);
+    }
+  })();
+</script>
+
+</body>
+</html>
