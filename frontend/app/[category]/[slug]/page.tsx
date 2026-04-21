@@ -5,65 +5,96 @@ import { categorySlugToName } from "@/lib/categories";
 import {
   getArticleBySlug,
   getRelatedArticles,
-  getMostRead,
 } from "@/lib/supabase";
-import ArticlePager from "@/components/ArticlePager";
+import ResponsiveAdSlot from "@/components/ResponsiveAdSlot";
 import RelatedArticles from "@/components/RelatedArticles";
-import Sidebar from "@/components/Sidebar";
-import AdSlot from "@/components/AdSlot";
 
 export const revalidate = 3600;
 
 type Params = { category: string; slug: string };
+type SearchParams = { strana?: string };
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Params;
+  searchParams: SearchParams;
 }): Promise<Metadata> {
   const article = await getArticleBySlug(params.slug);
   if (!article) return {};
-  const url = `/${params.category}/${params.slug}`;
+
+  const totalPages = article.pages_json.length;
+  const currentPage = Math.max(
+    1,
+    Math.min(totalPages, parseInt(searchParams.strana || "1"))
+  );
+
+  const base = `/${params.category}/${params.slug}`;
+  const canonical = currentPage === 1 ? base : `${base}?strana=${currentPage}`;
+
   return {
-    title: article.title,
+    title:
+      currentPage === 1
+        ? article.title
+        : `${article.title} (strana ${currentPage})`,
     description: article.subtitle || article.moral || article.title,
     openGraph: {
       title: article.title,
       description: article.subtitle || undefined,
-      url,
+      url: canonical,
       type: "article",
       images: article.hero_image_url ? [article.hero_image_url] : undefined,
     },
-    alternates: { canonical: url },
+    alternates: { canonical },
   };
 }
 
-export default async function ArticlePage({ params }: { params: Params }) {
+export default async function ArticlePage({
+  params,
+  searchParams,
+}: {
+  params: Params;
+  searchParams: SearchParams;
+}) {
   const categoryName = categorySlugToName(params.category);
   if (!categoryName) notFound();
 
   const article = await getArticleBySlug(params.slug);
   if (!article) notFound();
 
-  // Enforce da se članak učitava samo pod ispravnom kategorijom
   if (article.category !== categoryName) notFound();
 
-  const [related, mostRead] = await Promise.all([
-    getRelatedArticles(article.category, article.id, 3),
-    getMostRead(5),
-  ]);
+  const totalPages = article.pages_json.length;
+  const rawPage = parseInt(searchParams.strana || "1");
+  const currentPage = Math.max(1, Math.min(totalPages, isNaN(rawPage) ? 1 : rawPage));
+  const isFirstPage = currentPage === 1;
+  const isLastPage = currentPage === totalPages;
 
-  const publishedDate = new Date(article.published_at).toLocaleDateString("bs-BA", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  const pageData = article.pages_json[currentPage - 1];
+  const base = `/${params.category}/${params.slug}`;
+  const hrefFor = (p: number) => (p === 1 ? base : `${base}?strana=${p}`);
+
+  const related = isLastPage
+    ? await getRelatedArticles(article.category, article.id, 6)
+    : [];
+
+  const publishedDate = new Date(article.published_at).toLocaleDateString(
+    "bs-BA",
+    { day: "numeric", month: "long", year: "numeric" }
+  );
 
   const totalWords = article.pages_json.reduce(
     (sum, p) => sum + p.text.split(/\s+/).length,
     0
   );
   const readMinutes = Math.max(1, Math.round(totalWords / 220));
+
+  // Split current page text in half (za Ad2 u sredini teksta na stranicama 2+)
+  const paragraphs = pageData.text.split(/\n\n+|\n/).filter((p) => p.trim());
+  const midPoint = Math.max(1, Math.ceil(paragraphs.length / 2));
+  const firstHalf = paragraphs.slice(0, midPoint);
+  const secondHalf = paragraphs.slice(midPoint);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -84,60 +115,157 @@ export default async function ArticlePage({ params }: { params: Params }) {
   };
 
   return (
-    <div className="page-wrap">
-      <main id="article-main">
+    <div className="article-single">
+      {isFirstPage && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+      )}
 
-        <div className="breadcrumb">
-          <Link href="/">Početna</Link>
-          <span>›</span>
-          <Link href={`/${params.category}`}>{categoryName}</Link>
-          <span>›</span>
-          <span>{truncate(article.title, 40)}</span>
+      {/* === OGLAS #1 — TOP === */}
+      <ResponsiveAdSlot />
+
+      {isFirstPage && (
+        <>
+          <div className="breadcrumb">
+            <Link href="/">Početna</Link>
+            <span>›</span>
+            <Link href={`/${params.category}`}>{categoryName}</Link>
+            <span>›</span>
+            <span>{truncate(article.title, 40)}</span>
+          </div>
+
+          <span className="category-tag">{categoryName.toUpperCase()}</span>
+
+          <h1 className="article-title">{article.title}</h1>
+
+          {article.subtitle && (
+            <p className="article-subtitle">{article.subtitle}</p>
+          )}
+
+          <div className="article-meta">
+            Objavljeno: <strong>{publishedDate}</strong>
+            {" · "}Autor: <strong>Redakcija</strong>
+            {" · "}Čitanje: <strong>~{readMinutes} min</strong>
+            {article.views > 0 && (
+              <>
+                {" · "}
+                <strong>{article.views.toLocaleString("bs-BA")}</strong> pregleda
+              </>
+            )}
+          </div>
+
+          {article.hero_image_url && (
+            <div className="hero-image">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={article.hero_image_url} alt={article.title} />
+            </div>
+          )}
+        </>
+      )}
+
+      {/* === OGLAS #2 — MIDDLE === */}
+      <ResponsiveAdSlot />
+
+      {/* === TEKST === */}
+      <div className="article-body">
+        <div className="page-indicator">
+          Stranica {currentPage} od {totalPages}
         </div>
 
-        <span className="category-tag">{categoryName.toUpperCase()}</span>
+        {firstHalf.map((p, i) => (
+          <p key={`first-${i}`}>{p}</p>
+        ))}
 
-        <h1 className="article-title">{article.title}</h1>
-
-        {article.subtitle && (
-          <p className="article-subtitle">{article.subtitle}</p>
+        {secondHalf.length > 0 && (
+          <>
+            {/* Ad umetnut u sredinu teksta samo ako ima čime podijeliti */}
+            {!isFirstPage && <ResponsiveAdSlot />}
+            {secondHalf.map((p, i) => (
+              <p key={`second-${i}`}>{p}</p>
+            ))}
+          </>
         )}
 
-        <div className="article-meta">
-          Objavljeno: <strong>{publishedDate}</strong>
-          {" · "}Autor: <strong>Redakcija</strong>
-          {" · "}Čitanje: <strong>~{readMinutes} min</strong>
-          {article.views > 0 && (
-            <>
-              {" · "}
-              <strong>{article.views.toLocaleString("bs-BA")}</strong> pregleda
-            </>
-          )}
-        </div>
+        {!isLastPage && pageData.hook && (
+          <div className="slide-hook">📌 {pageData.hook}</div>
+        )}
 
-        <div className="hero-image">
-          {article.hero_image_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={article.hero_image_url} alt={article.title} />
-          ) : null}
-        </div>
+        {isLastPage && article.moral && (
+          <div className="moral-box">
+            <strong>Pouka priče</strong>
+            {article.moral}
+          </div>
+        )}
 
-        <ArticlePager pages={article.pages_json} moral={article.moral} />
+        {isLastPage && (
+          <p
+            style={{
+              fontSize: 14,
+              color: "#666",
+              fontStyle: "italic",
+              textAlign: "center",
+              marginTop: 20,
+            }}
+          >
+            * Priča inspirisana istinitim životnim situacijama. Imena i
+            detalji su izmijenjeni radi zaštite privatnosti.
+          </p>
+        )}
+      </div>
 
-        <AdSlot
-          slot="article-bottom"
-          className="ad-box ad-rectangle"
-          style={{ marginTop: 26 }}
-          placeholder="Reklama · 300×250"
-        />
+      {/* === OGLAS #3 — BOTTOM === */}
+      <ResponsiveAdSlot />
 
-        <RelatedArticles articles={related} />
-      </main>
-      <Sidebar mostRead={mostRead} />
+      {/* === NAVIGATION === */}
+      <div className="nav-buttons">
+        {currentPage > 1 ? (
+          <a href={hrefFor(currentPage - 1)} className="btn-prev">
+            ← Nazad
+          </a>
+        ) : (
+          <button className="btn-prev" disabled>
+            ← Nazad
+          </button>
+        )}
+
+        <span className="slide-counter">
+          {currentPage} / {totalPages}
+        </span>
+
+        {!isLastPage ? (
+          <a href={hrefFor(currentPage + 1)} className="btn-next">
+            Sljedeće →
+          </a>
+        ) : (
+          <a href="#related" className="btn-next">
+            ✓ Kraj priče — Pročitaj još
+          </a>
+        )}
+      </div>
+
+      {/* === RELATED — samo na zadnjoj stranici === */}
+      {isLastPage && related.length > 0 && (
+        <section id="related" style={{ marginTop: 40 }}>
+          <h2
+            style={{
+              fontFamily: "Arial, sans-serif",
+              fontSize: 14,
+              fontWeight: "bold",
+              textTransform: "uppercase",
+              letterSpacing: 1,
+              color: "#1a73e8",
+              borderBottom: "2px solid #1a73e8",
+              paddingBottom: 8,
+              marginBottom: 14,
+            }}
+          >
+            📖 Pročitaj još
+          </h2>
+          <RelatedArticles articles={related} />
+        </section>
+      )}
     </div>
   );
 }
