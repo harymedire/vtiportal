@@ -35,9 +35,6 @@ logs/
 celerybeat-schedule
 celerybeat.pid
 
-# Assets (font se download-uje u Dockerfile)
-assets/Anton-Regular.ttf
-
 # Docker
 *.pid
 
