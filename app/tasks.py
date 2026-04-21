@@ -137,6 +137,7 @@ def generate_single_article(self, template_id: int, job_id: str = None) -> dict:
             published_at=datetime.utcnow(),
         )
         db.add(new_article)
+        db.flush()  # Forsiraj INSERT u articles prije api_usage (FK constraint)
 
         # Usage tracking
         db.add(ApiUsage(
