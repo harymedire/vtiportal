@@ -7,7 +7,6 @@ import { CATEGORIES } from "@/lib/categories";
 
 export const runtime = "nodejs";
 
-// Jednostavan slugify bosanske ćirilice/latinice
 function slugify(str: string): string {
   return str
     .toLowerCase()
@@ -22,55 +21,65 @@ function slugify(str: string): string {
     .substring(0, 80);
 }
 
+function asString(v: unknown): string | null {
+  return typeof v === "string" ? v : null;
+}
+
+function asStringArray(v: unknown): string[] {
+  if (Array.isArray(v)) return v.filter((x): x is string => typeof x === "string");
+  if (typeof v === "string") {
+    return v.split(",").map((t) => t.trim()).filter(Boolean);
+  }
+  return [];
+}
+
 export async function POST(req: NextRequest) {
   if (!getAdminSessionFromCookies()) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const body = await req.json().catch(() => null);
-  if (!body) {
+  if (!body || typeof body !== "object") {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const {
-    title,
-    subtitle,
-    category,
-    tags,
-    moral,
-    text,
-    hero_image_url,
-  } = body as Record<string, string | string[] | undefined>;
+  const title = asString(body.title);
+  const subtitle = asString(body.subtitle);
+  const category = asString(body.category);
+  const moral = asString(body.moral);
+  const text = asString(body.text);
+  const heroImageUrl = asString(body.hero_image_url);
+  const tagsArray = asStringArray(body.tags);
 
   // Validacija
   const errors: string[] = [];
-  if (!title || typeof title !== "string" || title.length < 20)
+  if (!title || title.length < 20)
     errors.push("Naslov mora imati najmanje 20 karaktera");
-  if (title && typeof title === "string" && title.length > 200)
+  if (title && title.length > 200)
     errors.push("Naslov najviše 200 karaktera");
-  if (!category || typeof category !== "string")
-    errors.push("Kategorija je obavezna");
+  if (!category) errors.push("Kategorija je obavezna");
   if (category && !CATEGORIES.some((c) => c.name === category))
-    errors.push(`Kategorija mora biti jedna od: ${CATEGORIES.map((c) => c.name).join(", ")}`);
-  if (!text || typeof text !== "string" || text.trim().length < 300)
+    errors.push(
+      `Kategorija mora biti jedna od: ${CATEGORIES.map((c) => c.name).join(", ")}`
+    );
+  if (!text || text.trim().length < 300)
     errors.push("Tekst mora imati najmanje 300 karaktera");
 
-  if (errors.length > 0) {
+  if (errors.length > 0 || !title || !category || !text) {
     return NextResponse.json({ error: errors.join(" · ") }, { status: 400 });
   }
 
-  const pages = paginateText(text as string, {
+  const pages = paginateText(text, {
     targetWordsPerPage: 200,
     minPages: 3,
     maxPages: 10,
   });
 
-  let finalSlug = slugify(title as string);
+  let finalSlug = slugify(title);
   const articleId = randomUUID();
 
   const supabase = getSupabaseAdmin();
 
-  // Provjeri dup slug
   const { data: existing } = await supabase
     .from("articles")
     .select("id")
@@ -78,32 +87,26 @@ export async function POST(req: NextRequest) {
     .maybeSingle();
 
   if (existing) {
-    const hash = createHash("sha256").update(articleId).digest("hex").slice(0, 6);
+    const hash = createHash("sha256")
+      .update(articleId)
+      .digest("hex")
+      .slice(0, 6);
     finalSlug = `${finalSlug}-${hash}`;
   }
-
-  const tagsArray = Array.isArray(tags)
-    ? tags
-    : typeof tags === "string"
-    ? (tags as string)
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean)
-    : [];
 
   const { error: insertError } = await supabase.from("articles").insert({
     id: articleId,
     title,
     slug: finalSlug,
-    subtitle: subtitle || null,
+    subtitle: subtitle,
     category,
     tags: tagsArray,
     pages_json: pages,
-    moral: moral || null,
-    hero_image_url: hero_image_url || null,
-    thumbnail_url: hero_image_url || null,
+    moral: moral,
+    hero_image_url: heroImageUrl,
+    thumbnail_url: heroImageUrl,
     status: "published",
-    template_id: 99, // 99 = admin-published
+    template_id: 99,
     variables_used: { manual: true, source: "admin" },
     published_at: new Date().toISOString(),
   });
@@ -115,7 +118,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Trigger ISR revalidation
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://vtiportal.com";
   const categorySlug =
     CATEGORIES.find((c) => c.name === category)?.slug || "";
