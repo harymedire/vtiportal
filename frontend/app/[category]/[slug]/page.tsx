@@ -33,17 +33,39 @@ export async function generateMetadata({
   const base = `/${params.category}/${params.slug}`;
   const canonical = currentPage === 1 ? base : `${base}?strana=${currentPage}`;
 
+  const description = article.subtitle || article.moral || article.title;
+
   return {
     title:
       currentPage === 1
         ? article.title
         : `${article.title} (strana ${currentPage})`,
-    description: article.subtitle || article.moral || article.title,
+    description,
     openGraph: {
       title: article.title,
-      description: article.subtitle || undefined,
+      description,
       url: canonical,
       type: "article",
+      siteName: "VTIportal",
+      locale: "bs_BA",
+      publishedTime: article.published_at,
+      images: article.hero_image_url
+        ? [
+            {
+              url: article.hero_image_url,
+              secureUrl: article.hero_image_url,
+              width: 1280,
+              height: 720,
+              type: "image/jpeg",
+              alt: article.title,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description,
       images: article.hero_image_url ? [article.hero_image_url] : undefined,
     },
     alternates: { canonical },
