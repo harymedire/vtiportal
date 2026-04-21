@@ -35,7 +35,7 @@ def post_to_page(
 
     endpoint = f"https://graph.facebook.com/v19.0/{settings.FACEBOOK_PAGE_ID}/feed"
     payload = {
-        "message": f"{message}\n\n{link}",
+        "message": message,
         "link": link,
         "access_token": settings.FACEBOOK_PAGE_ACCESS_TOKEN,
     }
@@ -60,13 +60,14 @@ def post_to_page(
 
 
 def format_fb_message(article: dict) -> str:
-    """Formatira caption za FB post sa naslovom i podnaslovom."""
+    """
+    Formatira caption za FB post.
+
+    Koristi samo podnaslov (subtitle) kao tekst posta — naslov se
+    automatski povlači iz og:title u link preview kartici ispod.
+    Fallback na naslov ako subtitle nije dostupan.
+    """
+    subtitle = (article.get("subtitle") or "").strip()
     title = article["title"]
-    subtitle = article.get("subtitle", "")
 
-    message = f"📖 {title}"
-    if subtitle:
-        message += f"\n\n{subtitle}"
-    message += "\n\n👇 Pročitajte cijelu priču na VTIportal.com"
-
-    return message
+    return subtitle if subtitle else title
