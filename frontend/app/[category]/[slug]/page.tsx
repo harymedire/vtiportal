@@ -263,7 +263,7 @@ export default async function ArticlePage({
 
         {!isLastPage ? (
           <a href={hrefFor(currentPage + 1)} className="btn-next">
-            Sljedeće →
+            Nastavi čitati →
           </a>
         ) : (
           <a href="#related" className="btn-next">

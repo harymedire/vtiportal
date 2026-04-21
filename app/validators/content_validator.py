@@ -20,8 +20,8 @@ def validate_content(article: Dict[str, Any]) -> Tuple[bool, List[str]]:
 
     # Pages
     pages = article.get("pages", [])
-    if len(pages) < 4 or len(pages) > 6:
-        errors.append(f"Broj stranica mora biti 4-6, ima {len(pages)}")
+    if len(pages) < 4 or len(pages) > 12:
+        errors.append(f"Broj stranica mora biti 4-12, ima {len(pages)}")
 
     # Svaka stranica mora imati text
     for i, page in enumerate(pages, 1):
