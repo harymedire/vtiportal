@@ -15,20 +15,33 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 const LIST_SELECT =
   "id,title,slug,subtitle,category,thumbnail_url,hero_image_url,published_at,views";
 
-export async function getLatestArticles(limit = 30): Promise<ArticleListItem[]> {
+export async function getLatestArticles(
+  limit = 10,
+  offset = 0
+): Promise<ArticleListItem[]> {
   const { data, error } = await supabase
     .from("articles")
     .select(LIST_SELECT)
     .eq("status", "published")
     .order("published_at", { ascending: false })
-    .limit(limit);
+    .range(offset, offset + limit - 1);
   if (error) throw error;
   return (data || []) as ArticleListItem[];
 }
 
+export async function countPublishedArticles(): Promise<number> {
+  const { count, error } = await supabase
+    .from("articles")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "published");
+  if (error) throw error;
+  return count || 0;
+}
+
 export async function getArticlesByCategory(
   category: string,
-  limit = 30
+  limit = 10,
+  offset = 0
 ): Promise<ArticleListItem[]> {
   const { data, error } = await supabase
     .from("articles")
@@ -36,9 +49,21 @@ export async function getArticlesByCategory(
     .eq("status", "published")
     .eq("category", category)
     .order("published_at", { ascending: false })
-    .limit(limit);
+    .range(offset, offset + limit - 1);
   if (error) throw error;
   return (data || []) as ArticleListItem[];
+}
+
+export async function countArticlesByCategory(
+  category: string
+): Promise<number> {
+  const { count, error } = await supabase
+    .from("articles")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "published")
+    .eq("category", category);
+  if (error) throw error;
+  return count || 0;
 }
 
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
