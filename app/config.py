@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     # ===== Facebook (opciono) =====
     FACEBOOK_PAGE_ID: Optional[str] = None
     FACEBOOK_PAGE_ACCESS_TOKEN: Optional[str] = None
+    # Interni FB auto-post iskl. — koristi Zapier preko RSS feeda
     FACEBOOK_AUTO_POST_ENABLED: bool = False
 
     # ===== Portal =====
