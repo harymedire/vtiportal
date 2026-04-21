@@ -67,7 +67,10 @@ export default async function ArticlePage({
 
   const totalPages = article.pages_json.length;
   const rawPage = parseInt(searchParams.strana || "1");
-  const currentPage = Math.max(1, Math.min(totalPages, isNaN(rawPage) ? 1 : rawPage));
+  const currentPage = Math.max(
+    1,
+    Math.min(totalPages, isNaN(rawPage) ? 1 : rawPage)
+  );
   const isFirstPage = currentPage === 1;
   const isLastPage = currentPage === totalPages;
 
@@ -90,8 +93,10 @@ export default async function ArticlePage({
   );
   const readMinutes = Math.max(1, Math.round(totalWords / 220));
 
-  // Split current page text in half (za Ad2 u sredini teksta na stranicama 2+)
-  const paragraphs = pageData.text.split(/\n\n+|\n/).filter((p) => p.trim());
+  // Tekst podijeljen u paragrafe
+  const paragraphs = pageData.text
+    .split(/\n\n+|\n/)
+    .filter((p) => p.trim());
   const midPoint = Math.max(1, Math.ceil(paragraphs.length / 2));
   const firstHalf = paragraphs.slice(0, midPoint);
   const secondHalf = paragraphs.slice(midPoint);
@@ -123,7 +128,7 @@ export default async function ArticlePage({
         />
       )}
 
-      {/* === OGLAS #1 — TOP === */}
+      {/* === OGLAS #1 — TOP (svaka stranica) === */}
       <ResponsiveAdSlot />
 
       {isFirstPage && (
@@ -151,7 +156,8 @@ export default async function ArticlePage({
             {article.views > 0 && (
               <>
                 {" · "}
-                <strong>{article.views.toLocaleString("bs-BA")}</strong> pregleda
+                <strong>{article.views.toLocaleString("bs-BA")}</strong>{" "}
+                pregleda
               </>
             )}
           </div>
@@ -162,14 +168,16 @@ export default async function ArticlePage({
               <img src={article.hero_image_url} alt={article.title} />
             </div>
           )}
+
+          {/* === OGLAS #2 — izmedju slike i teksta (SAMO na page 1) === */}
+          <ResponsiveAdSlot />
         </>
       )}
 
-      {/* === OGLAS #2 — MIDDLE === */}
-      <ResponsiveAdSlot />
-
       {/* === TEKST === */}
-      <div className="article-body">
+      <div
+        className={`article-body ${isFirstPage ? "first-page" : ""}`}
+      >
         <div className="page-indicator">
           Stranica {currentPage} od {totalPages}
         </div>
@@ -178,15 +186,12 @@ export default async function ArticlePage({
           <p key={`first-${i}`}>{p}</p>
         ))}
 
-        {secondHalf.length > 0 && (
-          <>
-            {/* Ad umetnut u sredinu teksta samo ako ima čime podijeliti */}
-            {!isFirstPage && <ResponsiveAdSlot />}
-            {secondHalf.map((p, i) => (
-              <p key={`second-${i}`}>{p}</p>
-            ))}
-          </>
-        )}
+        {/* === OGLAS #2 — u sredini teksta (SAMO na page 2+) === */}
+        {!isFirstPage && secondHalf.length > 0 && <ResponsiveAdSlot />}
+
+        {secondHalf.map((p, i) => (
+          <p key={`second-${i}`}>{p}</p>
+        ))}
 
         {!isLastPage && pageData.hook && (
           <div className="slide-hook">📌 {pageData.hook}</div>
@@ -215,7 +220,7 @@ export default async function ArticlePage({
         )}
       </div>
 
-      {/* === OGLAS #3 — BOTTOM === */}
+      {/* === OGLAS #3 — BOTTOM (svaka stranica) === */}
       <ResponsiveAdSlot />
 
       {/* === NAVIGATION === */}
