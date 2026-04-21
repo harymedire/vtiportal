@@ -33,10 +33,11 @@ def post_to_page(
         logger.warning("FB credentials missing")
         return {"error": "missing_credentials"}
 
+    # FB je deprecate-ovao 'link' parametar na /feed endpoint-u — URL mora
+    # biti dio message teksta, FB ga sam scrape-uje za preview card.
     endpoint = f"https://graph.facebook.com/v19.0/{settings.FACEBOOK_PAGE_ID}/feed"
     payload = {
-        "message": message,
-        "link": link,
+        "message": f"{message}\n\n{link}",
         "access_token": settings.FACEBOOK_PAGE_ACCESS_TOKEN,
     }
 
