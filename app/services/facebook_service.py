@@ -14,7 +14,13 @@ def post_to_page(
     image_url: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
-    Post na Facebook stranicu sa linkom i opciono slikom.
+    Post na Facebook stranicu sa linkom.
+
+    FB će sam scrape-ovati og:image iz linkovane stranice i prikazati je
+    kao preview card. To je pouzdanije od direktnog /photos uploada.
+
+    `image_url` je zadržan radi backward compatibility ali se ignoriše
+    (FB preview će povući sliku kroz og:image tagove frontenda).
 
     Returns:
         FB post response (sa 'id' poljem) ili {'error': ...}
@@ -27,21 +33,12 @@ def post_to_page(
         logger.warning("FB credentials missing")
         return {"error": "missing_credentials"}
 
-    # Koristi /photos endpoint ako ima slika, /feed ako nema
-    if image_url:
-        endpoint = f"https://graph.facebook.com/v19.0/{settings.FACEBOOK_PAGE_ID}/photos"
-        payload = {
-            "url": image_url,
-            "caption": f"{message}\n\n{link}",
-            "access_token": settings.FACEBOOK_PAGE_ACCESS_TOKEN,
-        }
-    else:
-        endpoint = f"https://graph.facebook.com/v19.0/{settings.FACEBOOK_PAGE_ID}/feed"
-        payload = {
-            "message": message,
-            "link": link,
-            "access_token": settings.FACEBOOK_PAGE_ACCESS_TOKEN,
-        }
+    endpoint = f"https://graph.facebook.com/v19.0/{settings.FACEBOOK_PAGE_ID}/feed"
+    payload = {
+        "message": f"{message}\n\n{link}",
+        "link": link,
+        "access_token": settings.FACEBOOK_PAGE_ACCESS_TOKEN,
+    }
 
     try:
         response = requests.post(endpoint, data=payload, timeout=30)
@@ -50,8 +47,13 @@ def post_to_page(
         logger.info(f"FB post success: {data.get('id')}")
         return data
     except requests.HTTPError as e:
-        logger.error(f"FB post failed: {e.response.text}")
-        return {"error": str(e), "response": e.response.text if e.response else None}
+        body = e.response.text if e.response is not None else ""
+        logger.error(f"FB post failed ({e.response.status_code if e.response else '?'}): {body}")
+        return {
+            "error": str(e),
+            "status": e.response.status_code if e.response is not None else None,
+            "response": body,
+        }
     except Exception as e:
         logger.error(f"FB post exception: {e}")
         return {"error": str(e)}
