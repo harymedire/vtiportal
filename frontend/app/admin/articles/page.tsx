@@ -1,16 +1,16 @@
 import { redirect } from "next/navigation";
 import { getAdminSessionFromCookies } from "@/lib/admin";
-import PublishForm from "./PublishForm";
+import ArticlesList from "./ArticlesList";
 
 export const dynamic = "force-dynamic";
 
-export default function AdminPage() {
+export default function AdminArticlesPage() {
   if (!getAdminSessionFromCookies()) redirect("/admin/login");
 
   return (
     <div
       style={{
-        maxWidth: 900,
+        maxWidth: 1100,
         margin: "20px auto",
         padding: "0 16px",
         fontFamily: "Arial, sans-serif",
@@ -22,24 +22,27 @@ export default function AdminPage() {
           justifyContent: "space-between",
           alignItems: "center",
           marginBottom: 20,
+          gap: 12,
+          flexWrap: "wrap",
         }}
       >
-        <h1 style={{ fontSize: 22, color: "#1a73e8" }}>VTIportal Admin</h1>
+        <h1 style={{ fontSize: 22, color: "#1a73e8", margin: 0 }}>
+          Svi članci
+        </h1>
         <div style={{ display: "flex", gap: 8 }}>
           <a
-            href="/admin/articles"
+            href="/admin"
             style={{
               padding: "8px 14px",
               background: "#1a73e8",
               color: "#fff",
-              border: "1px solid #1a73e8",
               borderRadius: 6,
               fontSize: 13,
               textDecoration: "none",
               fontWeight: 600,
             }}
           >
-            Svi članci
+            + Novi članak
           </a>
           <form action="/api/admin/logout" method="POST">
             <button
@@ -58,7 +61,7 @@ export default function AdminPage() {
           </form>
         </div>
       </div>
-      <PublishForm />
+      <ArticlesList />
     </div>
   );
 }

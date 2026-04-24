@@ -24,6 +24,8 @@ type AdminDatabase = {
           template_id: number;
           variables_used: unknown;
           published_at: string | null;
+          created_at: string;
+          views: number;
         };
         Insert: {
           id?: string;
