@@ -54,9 +54,6 @@ export async function generateMetadata({
             {
               url: article.hero_image_url,
               secureUrl: article.hero_image_url,
-              width: 1280,
-              height: 720,
-              type: "image/jpeg",
               alt: article.title,
             },
           ]
