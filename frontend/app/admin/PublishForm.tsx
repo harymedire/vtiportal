@@ -14,6 +14,9 @@ export default function PublishForm() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [generating, setGenerating] = useState(false);
+  const [generateError, setGenerateError] = useState<string | null>(null);
+  const [imagePrompt, setImagePrompt] = useState("");
   const [result, setResult] = useState<null | {
     ok: boolean;
     message: string;
@@ -30,6 +33,33 @@ export default function PublishForm() {
     text: "",
     hero_image_url: "",
   });
+
+  async function handleGenerateImage() {
+    const prompt = imagePrompt.trim();
+    if (!prompt) {
+      setGenerateError("Unesi prompt za generisanje");
+      return;
+    }
+    setGenerateError(null);
+    setGenerating(true);
+    try {
+      const res = await fetch("/api/admin/generate-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setGenerateError(json.error || "Generisanje neuspješno");
+      } else {
+        setForm((f) => ({ ...f, hero_image_url: json.url }));
+      }
+    } catch (err) {
+      setGenerateError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setGenerating(false);
+    }
+  }
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -194,6 +224,54 @@ export default function PublishForm() {
           background: "#fafafa",
         }}
       >
+        <div style={{ marginBottom: 12 }}>
+          <div style={{ fontSize: 12, color: "#555", marginBottom: 4, fontWeight: 600 }}>
+            🪄 Generiši sliku (Flux Schnell, ~$0.003)
+          </div>
+          <textarea
+            style={{
+              width: "100%",
+              padding: "8px 10px",
+              fontSize: 13,
+              border: "1px solid #ccc",
+              borderRadius: 6,
+              minHeight: 70,
+              resize: "vertical",
+              fontFamily: "inherit",
+            }}
+            placeholder="Opiši sliku na engleskom (16:9, JPG, bez ljudi ako članak to ne traži)..."
+            value={imagePrompt}
+            onChange={(e) => setImagePrompt(e.target.value)}
+            disabled={generating}
+          />
+          <button
+            type="button"
+            onClick={handleGenerateImage}
+            disabled={generating || uploading}
+            style={{
+              marginTop: 6,
+              padding: "8px 14px",
+              background: generating ? "#999" : "#6a4fb6",
+              color: "#fff",
+              border: "none",
+              borderRadius: 6,
+              fontSize: 13,
+              fontWeight: 600,
+              cursor: generating ? "wait" : "pointer",
+            }}
+          >
+            {generating ? "Generišem… (do 30s)" : "Generiši sliku"}
+          </button>
+          {generateError && (
+            <div style={{ marginTop: 6, color: "#d00", fontSize: 13 }}>
+              {generateError}
+            </div>
+          )}
+        </div>
+
+        <div style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>
+          Ili upload fajla:
+        </div>
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp,image/gif"
@@ -305,17 +383,17 @@ export default function PublishForm() {
 
       <button
         type="submit"
-        disabled={loading || uploading}
+        disabled={loading || uploading || generating}
         style={{
           width: "100%",
           padding: 14,
-          background: loading || uploading ? "#999" : "#1a73e8",
+          background: loading || uploading || generating ? "#999" : "#1a73e8",
           color: "#fff",
           border: "none",
           borderRadius: 6,
           fontSize: 16,
           fontWeight: "bold",
-          cursor: loading || uploading ? "not-allowed" : "pointer",
+          cursor: loading || uploading || generating ? "not-allowed" : "pointer",
         }}
       >
         {loading ? "Objavljujem…" : "Objavi članak"}
