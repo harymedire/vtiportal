@@ -12,6 +12,8 @@ const CATEGORIES = [
 
 export default function PublishForm() {
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [result, setResult] = useState<null | {
     ok: boolean;
     message: string;
@@ -28,6 +30,33 @@ export default function PublishForm() {
     text: "",
     hero_image_url: "",
   });
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadError(null);
+    setUploading(true);
+
+    const data = new FormData();
+    data.append("file", file);
+
+    try {
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: data,
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setUploadError(json.error || "Upload greška");
+      } else {
+        setForm((f) => ({ ...f, hero_image_url: json.url }));
+      }
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setUploading(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -155,17 +184,84 @@ export default function PublishForm() {
         placeholder="Jednorečenična pouka koja se prikazuje na poslednjoj stranici"
       />
 
-      <label style={labelStyle}>URL slike (hero + thumbnail)</label>
-      <input
-        style={inputStyle}
-        type="url"
-        value={form.hero_image_url}
-        onChange={(e) => setForm({ ...form, hero_image_url: e.target.value })}
-        placeholder="https://pub-xxx.r2.dev/... ili bilo koji javni URL slike"
-      />
+      <label style={labelStyle}>Hero slika</label>
+      <div
+        style={{
+          border: "1px dashed #ccc",
+          borderRadius: 6,
+          padding: 16,
+          marginBottom: 14,
+          background: "#fafafa",
+        }}
+      >
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          onChange={handleFileUpload}
+          disabled={uploading}
+          style={{ fontSize: 13 }}
+        />
+        <div style={{ fontSize: 12, color: "#888", marginTop: 6 }}>
+          Ili zalijepi javni URL:
+        </div>
+        <input
+          style={{ ...inputStyle, marginTop: 6, marginBottom: 0 }}
+          type="url"
+          value={form.hero_image_url}
+          onChange={(e) =>
+            setForm({ ...form, hero_image_url: e.target.value })
+          }
+          placeholder="https://..."
+        />
+        {uploading && (
+          <div style={{ marginTop: 8, color: "#1a73e8", fontSize: 13 }}>
+            Upload u toku…
+          </div>
+        )}
+        {uploadError && (
+          <div style={{ marginTop: 8, color: "#d00", fontSize: 13 }}>
+            {uploadError}
+          </div>
+        )}
+        {form.hero_image_url && !uploading && (
+          <div style={{ marginTop: 12 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={form.hero_image_url}
+              alt="Preview"
+              style={{
+                maxWidth: "100%",
+                maxHeight: 240,
+                borderRadius: 4,
+                display: "block",
+                marginBottom: 6,
+              }}
+            />
+            <div
+              style={{ fontSize: 11, color: "#666", wordBreak: "break-all" }}
+            >
+              {form.hero_image_url}
+            </div>
+            <button
+              type="button"
+              onClick={() => setForm({ ...form, hero_image_url: "" })}
+              style={{
+                marginTop: 6,
+                background: "transparent",
+                border: "1px solid #ccc",
+                padding: "4px 10px",
+                borderRadius: 4,
+                fontSize: 12,
+                cursor: "pointer",
+              }}
+            >
+              Ukloni
+            </button>
+          </div>
+        )}
+      </div>
       <div style={hintStyle}>
-        Preporučeno 1280x720 (16:9). Ako nemaš svoju — privremeno ostavi
-        prazno, članak se objavljuje bez slike.
+        Preporučeno 1280x720 (16:9). Max 10 MB. JPEG/PNG/WebP/GIF.
       </div>
 
       <label style={labelStyle}>
@@ -209,17 +305,17 @@ export default function PublishForm() {
 
       <button
         type="submit"
-        disabled={loading}
+        disabled={loading || uploading}
         style={{
           width: "100%",
           padding: 14,
-          background: loading ? "#999" : "#1a73e8",
+          background: loading || uploading ? "#999" : "#1a73e8",
           color: "#fff",
           border: "none",
           borderRadius: 6,
           fontSize: 16,
           fontWeight: "bold",
-          cursor: loading ? "not-allowed" : "pointer",
+          cursor: loading || uploading ? "not-allowed" : "pointer",
         }}
       >
         {loading ? "Objavljujem…" : "Objavi članak"}

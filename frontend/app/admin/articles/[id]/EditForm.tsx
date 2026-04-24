@@ -19,6 +19,8 @@ type Props = { articleId: string };
 export default function EditForm({ articleId }: Props) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [result, setResult] = useState<null | {
     ok: boolean;
@@ -73,6 +75,33 @@ export default function EditForm({ articleId }: Props) {
       abort = true;
     };
   }, [articleId]);
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadError(null);
+    setUploading(true);
+
+    const data = new FormData();
+    data.append("file", file);
+
+    try {
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: data,
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setUploadError(json.error || "Upload greška");
+      } else {
+        setForm((f) => ({ ...f, hero_image_url: json.url }));
+      }
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setUploading(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -207,32 +236,82 @@ export default function EditForm({ articleId }: Props) {
         onChange={(e) => setForm({ ...form, moral: e.target.value })}
       />
 
-      <label style={labelStyle}>URL slike (hero + thumbnail)</label>
-      <input
-        style={inputStyle}
-        type="url"
-        value={form.hero_image_url}
-        onChange={(e) =>
-          setForm({ ...form, hero_image_url: e.target.value })
-        }
-        placeholder="https://... ili ostavi prazno"
-      />
-      {form.hero_image_url && (
-        <div style={{ marginTop: -10, marginBottom: 14 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={form.hero_image_url}
-            alt="Preview"
-            style={{
-              maxWidth: "100%",
-              maxHeight: 240,
-              borderRadius: 4,
-              display: "block",
-              border: "1px solid #eee",
-            }}
-          />
+      <label style={labelStyle}>Hero slika</label>
+      <div
+        style={{
+          border: "1px dashed #ccc",
+          borderRadius: 6,
+          padding: 16,
+          marginBottom: 14,
+          background: "#fafafa",
+        }}
+      >
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          onChange={handleFileUpload}
+          disabled={uploading}
+          style={{ fontSize: 13 }}
+        />
+        <div style={{ fontSize: 12, color: "#888", marginTop: 6 }}>
+          Ili zalijepi javni URL:
         </div>
-      )}
+        <input
+          style={{ ...inputStyle, marginTop: 6, marginBottom: 0 }}
+          type="url"
+          value={form.hero_image_url}
+          onChange={(e) =>
+            setForm({ ...form, hero_image_url: e.target.value })
+          }
+          placeholder="https://..."
+        />
+        {uploading && (
+          <div style={{ marginTop: 8, color: "#1a73e8", fontSize: 13 }}>
+            Upload u toku…
+          </div>
+        )}
+        {uploadError && (
+          <div style={{ marginTop: 8, color: "#d00", fontSize: 13 }}>
+            {uploadError}
+          </div>
+        )}
+        {form.hero_image_url && !uploading && (
+          <div style={{ marginTop: 12 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={form.hero_image_url}
+              alt="Preview"
+              style={{
+                maxWidth: "100%",
+                maxHeight: 240,
+                borderRadius: 4,
+                display: "block",
+                marginBottom: 6,
+              }}
+            />
+            <div
+              style={{ fontSize: 11, color: "#666", wordBreak: "break-all" }}
+            >
+              {form.hero_image_url}
+            </div>
+            <button
+              type="button"
+              onClick={() => setForm({ ...form, hero_image_url: "" })}
+              style={{
+                marginTop: 6,
+                background: "transparent",
+                border: "1px solid #ccc",
+                padding: "4px 10px",
+                borderRadius: 4,
+                fontSize: 12,
+                cursor: "pointer",
+              }}
+            >
+              Ukloni
+            </button>
+          </div>
+        )}
+      </div>
 
       <label style={labelStyle}>Tekst članka</label>
       <textarea
@@ -280,17 +359,17 @@ export default function EditForm({ articleId }: Props) {
       <div style={{ display: "flex", gap: 10 }}>
         <button
           type="submit"
-          disabled={saving}
+          disabled={saving || uploading}
           style={{
             flex: 1,
             padding: 14,
-            background: saving ? "#999" : "#1a73e8",
+            background: saving || uploading ? "#999" : "#1a73e8",
             color: "#fff",
             border: "none",
             borderRadius: 6,
             fontSize: 16,
             fontWeight: "bold",
-            cursor: saving ? "not-allowed" : "pointer",
+            cursor: saving || uploading ? "not-allowed" : "pointer",
           }}
         >
           {saving ? "Snimam…" : "Sačuvaj izmjene"}
