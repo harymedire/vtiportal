@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const CATEGORIES = [
   "Ispovijesti",
-  "Komšiluk",
+  "Društvo",
   "Lifestyle",
 ];
 

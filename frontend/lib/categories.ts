@@ -1,14 +1,13 @@
 export const CATEGORIES = [
   { name: "Ispovijesti", slug: "ispovijesti" },
-  { name: "Komšiluk", slug: "komsiluk" },
+  { name: "Društvo", slug: "komsiluk" },
   { name: "Lifestyle", slug: "lifestyle" },
 ] as const;
 
 /**
- * Mapiranje starih kategorija na nove (za migraciju u DB i 301 redirect).
- * "Priče iz života" → "Komšiluk"
- * "Drame uz kafu" → "Lifestyle"
- * "Smijeh i suze" → "Lifestyle"
+ * Stari slug-ovi koji 301-redirectaju na nove (vidi next.config.mjs).
+ * Display name "Društvo" mapira na slug "komsiluk" da ne bi pukle FB
+ * reklame i postojeći backlinkovi koji ciljaju /komsiluk/* URL-ove.
  */
 export const LEGACY_CATEGORY_REDIRECTS: Record<string, string> = {
   "price-iz-zivota": "komsiluk",

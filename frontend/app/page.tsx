@@ -79,7 +79,7 @@ export default async function HomePage({
       getLatestArticles(8, 0),
       getMostRead(5),
       getArticlesByCategory("Ispovijesti", 4),
-      getArticlesByCategory("Komšiluk", 4),
+      getArticlesByCategory("Društvo", 4),
       getArticlesByCategory("Lifestyle", 4),
     ]);
 
@@ -122,7 +122,7 @@ export default async function HomePage({
           articles={ispovijesti}
         />
         <CategorySection
-          title="Komšiluk"
+          title="Društvo"
           slug="komsiluk"
           articles={komsiluk}
         />
