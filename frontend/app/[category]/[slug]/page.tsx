@@ -187,9 +187,6 @@ export default async function ArticlePage({
               <img src={article.hero_image_url} alt={article.title} />
             </div>
           )}
-
-          {/* === OGLAS #2 — izmedju slike i teksta (SAMO na page 1) === */}
-          <ResponsiveAdSlot />
         </>
       )}
 
@@ -200,9 +197,6 @@ export default async function ArticlePage({
         {firstHalf.map((p, i) => (
           <p key={`first-${i}`}>{p}</p>
         ))}
-
-        {/* === OGLAS #2 — u sredini teksta (SAMO na page 2+) === */}
-        {!isFirstPage && secondHalf.length > 0 && <ResponsiveAdSlot />}
 
         {secondHalf.map((p, i) => (
           <p key={`second-${i}`}>{p}</p>
