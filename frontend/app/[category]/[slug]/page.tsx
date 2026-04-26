@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { categorySlugToName } from "@/lib/categories";
+import { categorySlugToName, categoryNameToSlug } from "@/lib/categories";
 import {
   getArticleBySlug,
   getRelatedArticles,
@@ -82,7 +82,10 @@ export default async function ArticlePage({
   const article = await getArticleBySlug(params.slug);
   if (!article) notFound();
 
-  if (article.category !== categoryName) notFound();
+  // Provjeravamo preko slug-a, ne preko display imena, jer DB redovi
+  // mogu imati legacy display imena ("Komšiluk", "Priče iz života" itd.)
+  // koja kroz alias mapiranje vode na isti slug kao novo ime.
+  if (categoryNameToSlug(article.category) !== params.category) notFound();
 
   const totalPages = article.pages_json.length;
   const rawPage = parseInt(searchParams.strana || "1");
