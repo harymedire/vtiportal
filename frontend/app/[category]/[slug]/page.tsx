@@ -197,10 +197,6 @@ export default async function ArticlePage({
       <div
         className={`article-body ${isFirstPage ? "first-page" : ""}`}
       >
-        <div className="page-indicator">
-          Stranica {currentPage} od {totalPages}
-        </div>
-
         {firstHalf.map((p, i) => (
           <p key={`first-${i}`}>{p}</p>
         ))}
@@ -253,10 +249,6 @@ export default async function ArticlePage({
             ← Nazad
           </button>
         )}
-
-        <span className="slide-counter">
-          {currentPage} / {totalPages}
-        </span>
 
         {!isLastPage ? (
           <a href={hrefFor(currentPage + 1)} className="btn-next">
