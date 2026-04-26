@@ -23,11 +23,6 @@ const nextConfig = {
   async redirects() {
     return [
       { source: "/home", destination: "/", permanent: true },
-      {
-        source: "/ads.txt",
-        destination: "https://srv.adstxtmanager.com/19390/vtiportal.com",
-        permanent: true,
-      },
     ];
   },
 };
