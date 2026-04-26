@@ -22,8 +22,8 @@ export default function ONamaPage() {
 
       <h2>Važna napomena</h2>
       <p>
-        Priče objavljene na portalu u rubrikama <em>Ispovijesti</em>, <em>Drame uz kafu</em>,
-        <em> Komšiluk</em>, <em>Priče iz života</em> i <em>Smijeh i suze</em> jesu fiktivne
+        Priče objavljene na portalu u rubrikama <em>Ispovijesti</em>,
+        <em> Komšiluk</em> i <em>Lifestyle</em> jesu fiktivne
         pripovijetke inspirisane stvarnim životnim situacijama. Imena, likovi, gradovi
         i detalji su izmijenjeni ili izmišljeni radi zaštite privatnosti.
       </p>

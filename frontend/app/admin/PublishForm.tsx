@@ -4,10 +4,8 @@ import { useState } from "react";
 
 const CATEGORIES = [
   "Ispovijesti",
-  "Priče iz života",
   "Komšiluk",
-  "Drame uz kafu",
-  "Smijeh i suze",
+  "Lifestyle",
 ];
 
 export default function PublishForm() {

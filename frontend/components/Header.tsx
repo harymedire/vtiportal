@@ -37,6 +37,7 @@ export default function Header() {
 
         {/* Desktop nav */}
         <nav className="desktop-nav" aria-label="Glavni meni">
+          <Link href="/">Home</Link>
           {CATEGORIES.map((c) => (
             <Link key={c.slug} href={`/${c.slug}`}>
               {c.name}
@@ -67,6 +68,9 @@ export default function Header() {
           aria-label="Mobilni meni"
           onClick={(e) => e.stopPropagation()}
         >
+          <Link href="/" onClick={() => setOpen(false)}>
+            Home
+          </Link>
           {CATEGORIES.map((c) => (
             <Link
               key={c.slug}

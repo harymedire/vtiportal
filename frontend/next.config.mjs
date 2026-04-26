@@ -23,6 +23,13 @@ const nextConfig = {
   async redirects() {
     return [
       { source: "/home", destination: "/", permanent: true },
+      // === Stari slug-ovi kategorija → novi (301) ===
+      { source: "/price-iz-zivota", destination: "/komsiluk", permanent: true },
+      { source: "/price-iz-zivota/:slug", destination: "/komsiluk/:slug", permanent: true },
+      { source: "/drame-uz-kafu", destination: "/lifestyle", permanent: true },
+      { source: "/drame-uz-kafu/:slug", destination: "/lifestyle/:slug", permanent: true },
+      { source: "/smijeh-i-suze", destination: "/lifestyle", permanent: true },
+      { source: "/smijeh-i-suze/:slug", destination: "/lifestyle/:slug", permanent: true },
     ];
   },
 };

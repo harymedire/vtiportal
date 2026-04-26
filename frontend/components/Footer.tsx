@@ -14,8 +14,8 @@ export default function Footer() {
         © {new Date().getFullYear()} VTIportal.com · Sva prava zadržana
       </div>
       <div className="disclaimer">
-        Priče objavljene u rubrikama &quot;Ispovijesti&quot;, &quot;Drame uz kafu&quot;, &quot;Komšiluk&quot;
-        i sličnim kategorijama inspirisane su stvarnim životnim situacijama.
+        Priče objavljene u rubrikama &quot;Ispovijesti&quot;, &quot;Komšiluk&quot; i &quot;Lifestyle&quot;
+        inspirisane su stvarnim životnim situacijama.
         Imena, likovi i detalji su izmijenjeni ili izmišljeni radi zaštite privatnosti.
       </div>
     </footer>

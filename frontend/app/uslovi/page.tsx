@@ -18,8 +18,7 @@ export default function UsloviPage() {
       <h2>Priroda sadržaja</h2>
       <p>
         Priče objavljene na portalu u rubrikama <em>Ispovijesti</em>,{" "}
-        <em>Drame uz kafu</em>, <em>Komšiluk</em>, <em>Priče iz života</em> i{" "}
-        <em>Smijeh i suze</em> jesu fiktivne pripovijetke inspirisane stvarnim
+        <em>Komšiluk</em> i <em>Lifestyle</em> jesu fiktivne pripovijetke inspirisane stvarnim
         životnim situacijama. Imena, likovi, gradovi i detalji su izmijenjeni
         ili izmišljeni. Svaka sličnost sa stvarnim osobama ili događajima je
         slučajna.
