@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getAdminSessionFromCookies } from "@/lib/admin";
 import PublishForm from "./PublishForm";
+import MigrateButton from "./MigrateButton";
 
 export const dynamic = "force-dynamic";
 
@@ -58,6 +59,7 @@ export default function AdminPage() {
           </form>
         </div>
       </div>
+      <MigrateButton />
       <PublishForm />
     </div>
   );
