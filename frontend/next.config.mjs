@@ -30,6 +30,9 @@ const nextConfig = {
       { source: "/drame-uz-kafu/:slug", destination: "/lifestyle/:slug", permanent: true },
       { source: "/smijeh-i-suze", destination: "/lifestyle", permanent: true },
       { source: "/smijeh-i-suze/:slug", destination: "/lifestyle/:slug", permanent: true },
+      // === FB i drugi spoljni izvori sa diakritikom u URL-u → ASCII slug ===
+      { source: "/komšiluk", destination: "/komsiluk", permanent: true },
+      { source: "/komšiluk/:slug", destination: "/komsiluk/:slug", permanent: true },
     ];
   },
 };

@@ -15,9 +15,14 @@ export const LEGACY_CATEGORY_REDIRECTS: Record<string, string> = {
   "smijeh-i-suze": "lifestyle",
 };
 
-export const CATEGORY_NAME_TO_SLUG: Record<string, string> = Object.fromEntries(
-  CATEGORIES.map((c) => [c.name, c.slug])
-);
+export const CATEGORY_NAME_TO_SLUG: Record<string, string> = {
+  ...Object.fromEntries(CATEGORIES.map((c) => [c.name, c.slug])),
+  // Legacy display imena u DB redovima (dok se ne migrira) — mapirana na nove slug-ove.
+  "Komšiluk": "komsiluk",
+  "Priče iz života": "komsiluk",
+  "Drame uz kafu": "lifestyle",
+  "Smijeh i suze": "lifestyle",
+};
 
 export const CATEGORY_SLUG_TO_NAME: Record<string, string> = Object.fromEntries(
   CATEGORIES.map((c) => [c.slug, c.name])
