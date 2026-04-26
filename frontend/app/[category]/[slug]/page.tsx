@@ -6,7 +6,7 @@ import {
   getArticleBySlug,
   getRelatedArticles,
 } from "@/lib/supabase";
-import ResponsiveAdSlot from "@/components/ResponsiveAdSlot";
+import EzoicAd from "@/components/EzoicAd";
 import RelatedArticles from "@/components/RelatedArticles";
 
 export const revalidate = 3600;
@@ -148,7 +148,7 @@ export default async function ArticlePage({
       )}
 
       {/* === OGLAS #1 — TOP (svaka stranica) === */}
-      <ResponsiveAdSlot />
+      <EzoicAd id={101} />
 
       {isFirstPage && (
         <>
@@ -189,7 +189,7 @@ export default async function ArticlePage({
           )}
 
           {/* === OGLAS #2 — izmedju slike i teksta (SAMO na page 1) === */}
-          <ResponsiveAdSlot />
+          <EzoicAd id={102} />
         </>
       )}
 
@@ -202,7 +202,7 @@ export default async function ArticlePage({
         ))}
 
         {/* === OGLAS #2 — u sredini teksta (SAMO na page 2+) === */}
-        {!isFirstPage && secondHalf.length > 0 && <ResponsiveAdSlot />}
+        {!isFirstPage && secondHalf.length > 0 && <EzoicAd id={102} />}
 
         {secondHalf.map((p, i) => (
           <p key={`second-${i}`}>{p}</p>
@@ -236,7 +236,7 @@ export default async function ArticlePage({
       </div>
 
       {/* === OGLAS #3 — BOTTOM (svaka stranica) === */}
-      <ResponsiveAdSlot />
+      <EzoicAd id={103} />
 
       {/* === NAVIGATION === */}
       <div className="nav-buttons">

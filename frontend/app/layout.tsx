@@ -41,6 +41,38 @@ export default function RootLayout({
   return (
     <html lang="bs">
       <head>
+        {/* Ezoic CMP — Gatekeeper Consent */}
+        <Script
+          id="ezoic-cmp-min"
+          src="https://cmp.gatekeeperconsent.com/min.js"
+          data-cfasync="false"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="ezoic-cmp"
+          src="https://the.gatekeeperconsent.com/cmp.min.js"
+          data-cfasync="false"
+          strategy="afterInteractive"
+        />
+        {/* Ezoic Standalone */}
+        <Script
+          id="ezoic-sa"
+          async
+          src="https://www.ezojs.com/ezoic/sa.min.js"
+          strategy="afterInteractive"
+        />
+        <Script id="ezoic-init" strategy="afterInteractive">
+          {`
+            window.ezstandalone = window.ezstandalone || {};
+            ezstandalone.cmd = ezstandalone.cmd || [];
+          `}
+        </Script>
+        <Script
+          id="ezoic-analytics"
+          src="https://ezoicanalytics.com/analytics.js"
+          strategy="afterInteractive"
+        />
+        {/* AdSense — Ezoic koristi tvoj AdSense kao demand source */}
         <Script
           id="google-adsense"
           async
