@@ -115,13 +115,9 @@ export default async function ArticlePage({
   );
   const readMinutes = Math.max(1, Math.round(totalWords / 220));
 
-  // Tekst podijeljen u paragrafe
   const paragraphs = pageData.text
     .split(/\n\n+|\n/)
     .filter((p) => p.trim());
-  const midPoint = Math.max(1, Math.ceil(paragraphs.length / 2));
-  const firstHalf = paragraphs.slice(0, midPoint);
-  const secondHalf = paragraphs.slice(midPoint);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -150,7 +146,7 @@ export default async function ArticlePage({
         />
       )}
 
-      {/* === OGLAS #1 — TOP (svaka stranica) === */}
+      {/* === OGLAS — TOP (svaka stranica) === */}
       <ResponsiveAdSlot />
 
       {isFirstPage && (
@@ -197,12 +193,8 @@ export default async function ArticlePage({
       <div
         className={`article-body ${isFirstPage ? "first-page" : ""}`}
       >
-        {firstHalf.map((p, i) => (
-          <p key={`first-${i}`}>{p}</p>
-        ))}
-
-        {secondHalf.map((p, i) => (
-          <p key={`second-${i}`}>{p}</p>
+        {paragraphs.map((p, i) => (
+          <p key={i}>{p}</p>
         ))}
 
         {!isLastPage && pageData.hook && (
@@ -232,7 +224,7 @@ export default async function ArticlePage({
         )}
       </div>
 
-      {/* === OGLAS #3 — BOTTOM (svaka stranica) === */}
+      {/* === OGLAS — BOTTOM (svaka stranica) === */}
       <ResponsiveAdSlot />
 
       {/* === NAVIGATION === */}
@@ -261,21 +253,6 @@ export default async function ArticlePage({
       {/* === RELATED — samo na zadnjoj stranici === */}
       {isLastPage && related.length > 0 && (
         <section id="related" style={{ marginTop: 40 }}>
-          <h2
-            style={{
-              fontFamily: "Arial, sans-serif",
-              fontSize: 14,
-              fontWeight: "bold",
-              textTransform: "uppercase",
-              letterSpacing: 1,
-              color: "#1a73e8",
-              borderBottom: "2px solid #1a73e8",
-              paddingBottom: 8,
-              marginBottom: 14,
-            }}
-          >
-            📖 Pročitaj još
-          </h2>
           <RelatedArticles articles={related} />
         </section>
       )}

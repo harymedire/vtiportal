@@ -76,7 +76,7 @@ export default async function HomePage({
   // === Portal-style HOMEPAGE (strana 1) ===
   const [latest, mostRead, ispovijesti, komsiluk, lifestyle] =
     await Promise.all([
-      getLatestArticles(8, 0),
+      getLatestArticles(6, 0),
       getMostRead(5),
       getArticlesByCategory("Ispovijesti", 4),
       getArticlesByCategory("Društvo", 4),
@@ -98,22 +98,13 @@ export default async function HomePage({
   }
 
   const hero = latest[0];
-  const subHero = latest.slice(1, 4);
+  const sidebarLatest = latest.slice(1, 6);
 
   return (
     <div className="page-wrap">
       <main>
         {/* === HERO === */}
         <HeroCard article={hero} />
-
-        {/* === SUB-HERO ROW === */}
-        {subHero.length > 0 && (
-          <div className="sub-hero-grid">
-            {subHero.map((a) => (
-              <ArticleCard key={a.id} article={a} />
-            ))}
-          </div>
-        )}
 
         {/* === SEKCIJE PO KATEGORIJAMA === */}
         <CategorySection
@@ -142,7 +133,7 @@ export default async function HomePage({
           </div>
         )}
       </main>
-      <Sidebar mostRead={mostRead} />
+      <Sidebar mostRead={mostRead} latest={sidebarLatest} />
     </div>
   );
 }

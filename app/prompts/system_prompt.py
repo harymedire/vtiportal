@@ -19,7 +19,7 @@ OUTPUT FORMAT (uvijek vrati validan JSON, bez markdown code fence-ova):
 {
   "title": "clickbait ali tačan naslov, 60-100 karaktera",
   "subtitle": "1-2 rečenice podnaslova koje pojačavaju misteriju",
-  "category": "Ispovijesti | Priče iz života | Komšiluk | Drame uz kafu | Smijeh i suze",
+  "category": "Ispovijesti | Društvo | Lifestyle",
   "tags": ["3-5 relevantnih tagova"],
   "pages": [
     { "page": 1, "text": "...", "hook": "pitanje ili cliffhanger" },
@@ -31,5 +31,5 @@ OUTPUT FORMAT (uvijek vrati validan JSON, bez markdown code fence-ova):
   "moral_or_punchline": "jednorečenična pouka ili punchline priče"
 }
 
-Svaka stranica je 150-220 riječi. Ukupno priča 800-1100 riječi. Vrati SAMO JSON, bez objašnjenja prije ili poslije.
+Svaka stranica je 280-380 riječi (minimum 250, maksimum 400). Ukupno priča (5 stranica) ~1400-1900 riječi. Vrati SAMO JSON, bez objašnjenja prije ili poslije.
 """

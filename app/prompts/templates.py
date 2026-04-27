@@ -37,7 +37,7 @@ Ispoštuj sve globalne formatke i output JSON.""",
 TEMPLATE_2 = TemplateSpec(
     id=2,
     name="Humoristična familijarna drama",
-    category="Smijeh i suze",
+    category="Društvo",
     daily_quota=4,
     required_variables=["narator", "tenzija"],
     user_prompt="""Napiši HUMORISTIČNU priču iz porodičnog života.
@@ -58,7 +58,7 @@ Ispoštuj sve globalne formatke i output JSON.""",
 TEMPLATE_3 = TemplateSpec(
     id=3,
     name="Komšijska priča",
-    category="Komšiluk",
+    category="Društvo",
     daily_quota=2,
     required_variables=["opis_osobe", "istina"],
     user_prompt="""Napiši priču u stilu komšijske gossip priče.
@@ -83,7 +83,7 @@ Ispoštuj sve globalne formatke i output JSON.""",
 TEMPLATE_4 = TemplateSpec(
     id=4,
     name="SMS dijalog",
-    category="Drame uz kafu",
+    category="Lifestyle",
     daily_quota=3,
     required_variables=["osoba_A", "osoba_B", "zavrsetak"],
     user_prompt="""Napiši priču u formatu PRIKAZANIH SMS/Viber poruka između {osoba_A} i {osoba_B}.
@@ -136,7 +136,7 @@ Ispoštuj sve globalne formatke i output JSON.""",
 TEMPLATE_6 = TemplateSpec(
     id=6,
     name="Generacijska drama",
-    category="Priče iz života",
+    category="Društvo",
     daily_quota=2,
     required_variables=["mladi", "stariji", "tema"],
     user_prompt="""Napiši priču o sukobu GENERACIJA sa rezolucijom gdje obje strane shvate istinu.
@@ -163,7 +163,7 @@ Ispoštuj sve globalne formatke i output JSON.""",
 TEMPLATE_7 = TemplateSpec(
     id=7,
     name="Priča s putovanja",
-    category="Priče iz života",
+    category="Lifestyle",
     daily_quota=1,
     required_variables=["destinacija", "sezona", "lik", "tvist", "lekcija"],
     user_prompt="""Napiši priču koja se dešava na {destinacija} tokom {sezona}.
@@ -190,7 +190,7 @@ Ispoštuj sve globalne formatke i output JSON.""",
 TEMPLATE_8 = TemplateSpec(
     id=8,
     name="Svadbena drama",
-    category="Smijeh i suze",
+    category="Lifestyle",
     daily_quota=2,
     required_variables=["narator", "opis_svadbe", "problem"],
     user_prompt="""Napiši HUMORISTIČNU priču o haotičnoj svadbi iz perspektive {narator}.

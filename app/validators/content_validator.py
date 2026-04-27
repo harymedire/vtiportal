@@ -30,10 +30,10 @@ def validate_content(article: Dict[str, Any]) -> Tuple[bool, List[str]]:
             continue
 
         word_count = len(page["text"].split())
-        if word_count < 100:
-            errors.append(f"Stranica {i} prekratka: {word_count} riječi (min 100)")
-        elif word_count > 280:
-            errors.append(f"Stranica {i} preduga: {word_count} riječi (max 280)")
+        if word_count < 250:
+            errors.append(f"Stranica {i} prekratka: {word_count} riječi (min 250)")
+        elif word_count > 420:
+            errors.append(f"Stranica {i} preduga: {word_count} riječi (max 420)")
 
         # Stranice 1-4 moraju imati hook (osim poslednja)
         if i < len(pages) and not page.get("hook"):

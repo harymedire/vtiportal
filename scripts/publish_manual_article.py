@@ -8,13 +8,20 @@ ali sa ručno-napisanim sadržajem. Pokreni:
 Ili kao pre-deploy komandu u Railway-u:
 
     python -u scripts/publish_manual_article.py
+
+Dvije opcije za sadržaj:
+- `pages`: lista stranica (ručno podijeljen tekst + hookovi)
+- `body`:  jedan dugačak tekst, skripta automatski paginira na ~280-380
+           riječi po strani po granicama paragrafa
 """
 import sys
 import os
+import re
 import logging
 import uuid
 from datetime import datetime, date
 from decimal import Decimal
+from typing import List, Dict, Any
 from slugify import slugify
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -27,9 +34,9 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name
 from app.config import settings, category_to_slug
 from app.models import Article, ApiUsage
 from app.services.database import get_db
-from app.services.claude_service import generate_image_prompt, extract_overlay_text
+from app.services.claude_service import generate_image_prompt
 from app.services.replicate_service import generate_image
-from app.services.image_processor import add_clickbait_overlay, create_thumbnail
+from app.services.image_processor import create_thumbnail
 from app.services.storage_service import upload_image
 from app.services.embedding_service import compute_article_embedding
 
@@ -164,7 +171,68 @@ ARTICLE = {
 }
 
 
+def paginate_body(
+    body: str,
+    target_words: int = 330,
+    min_words: int = 280,
+    max_words: int = 380,
+) -> List[Dict[str, Any]]:
+    """Razbi jedan dugačak tekst na stranice po granicama paragrafa.
+
+    Ciljani word count je ~330 po stranici, sa hard min 280 / max 380
+    (uskladjeno sa content_validator pragovima 250-420).
+    """
+    paragraphs = [p.strip() for p in re.split(r"\n\n+", body.strip()) if p.strip()]
+    if not paragraphs:
+        return []
+
+    pages_text: List[str] = []
+    cur: List[str] = []
+    cur_words = 0
+
+    for para in paragraphs:
+        para_words = len(para.split())
+
+        if cur and cur_words + para_words > max_words:
+            pages_text.append("\n\n".join(cur))
+            cur = [para]
+            cur_words = para_words
+            continue
+
+        cur.append(para)
+        cur_words += para_words
+
+        if cur_words >= target_words:
+            pages_text.append("\n\n".join(cur))
+            cur = []
+            cur_words = 0
+
+    if cur:
+        if cur_words < min_words and pages_text:
+            pages_text[-1] = pages_text[-1] + "\n\n" + "\n\n".join(cur)
+        else:
+            pages_text.append("\n\n".join(cur))
+
+    last_idx = len(pages_text) - 1
+    pages: List[Dict[str, Any]] = []
+    for i, text in enumerate(pages_text):
+        page: Dict[str, Any] = {"page": i + 1, "text": text}
+        if i < last_idx:
+            page["hook"] = ""
+        else:
+            page["resolution_type"] = "katarza"
+        pages.append(page)
+    return pages
+
+
 def main():
+    if ARTICLE.get("body") and not ARTICLE.get("pages"):
+        ARTICLE["pages"] = paginate_body(ARTICLE["body"])
+        print(f"📄 Auto-paginated body → {len(ARTICLE['pages'])} stranica")
+        for p in ARTICLE["pages"]:
+            wc = len(p["text"].split())
+            print(f"   strana {p['page']}: {wc} riječi")
+
     total_cost = Decimal("0")
     article_id = uuid.uuid4()
     slug = slugify(ARTICLE["title"])[:80]
@@ -182,10 +250,8 @@ def main():
     total_cost += Decimal(str(image_cost))
     print(f"  Image cost: ${image_cost:.4f}")
 
-    # 2. Overlay
-    overlay_text = extract_overlay_text(ARTICLE["title"])
-    print(f"→ Overlay text: {overlay_text}")
-    final_image = add_clickbait_overlay(image_bytes, overlay_text)
+    # 2. Slika bez overlay teksta — čistiji izgled, bolji AdSense signal
+    final_image = image_bytes
     thumb_image = create_thumbnail(final_image)
 
     # 3. Upload

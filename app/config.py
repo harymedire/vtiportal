@@ -56,12 +56,17 @@ settings = Settings()
 
 # ===== Kategorije: mapa ime → URL slug =====
 # Koristi se za generisanje ispravnih URL-ova (telegram, FB, revalidate path).
+# Mora biti usklađeno sa frontend/lib/categories.ts.
 CATEGORY_SLUGS = {
     "Ispovijesti": "ispovijesti",
-    "Priče iz života": "price-iz-zivota",
+    "Društvo": "drustvo",
+    "Lifestyle": "lifestyle",
+    # Legacy: jedan stari FB ad članak ostaje na /komsiluk/<slug>
     "Komšiluk": "komsiluk",
-    "Drame uz kafu": "drame-uz-kafu",
-    "Smijeh i suze": "smijeh-i-suze",
+    # Stara DB display imena → mapiranje na nove slug-ove (za redove koji još nisu migrirani)
+    "Priče iz života": "drustvo",
+    "Drame uz kafu": "lifestyle",
+    "Smijeh i suze": "lifestyle",
 }
 
 

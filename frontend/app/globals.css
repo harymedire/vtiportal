@@ -200,7 +200,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 22px;
+  margin-top: 64px;
 }
 .btn-prev, .btn-next {
   font-family: Arial, sans-serif;
@@ -492,15 +492,25 @@
 /* ===== AD WRAPPER (336x280 MP) ===== */
 .vti-ad-wrap {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
   margin: 24px auto;
-  min-height: 280px;
   max-width: 100%;
   overflow: hidden;
 }
 .vti-ad-wrap ins.adsbygoogle {
   max-width: 100%;
+}
+.vti-ad-label {
+  font-family: Arial, sans-serif;
+  font-size: 9px;
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #999;
+  margin-bottom: 6px;
+  text-align: center;
+  display: block;
 }
 
 /* ===== ARTICLE SINGLE (no sidebar) ===== */
@@ -545,7 +555,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 22px;
+  margin-top: 64px;
 }
 .article-single .btn-prev,
 .article-single .btn-next {

@@ -24,14 +24,16 @@ const nextConfig = {
     return [
       { source: "/home", destination: "/", permanent: true },
       // === Stari slug-ovi kategorija → novi (301) ===
-      { source: "/price-iz-zivota", destination: "/komsiluk", permanent: true },
-      { source: "/price-iz-zivota/:slug", destination: "/komsiluk/:slug", permanent: true },
+      { source: "/price-iz-zivota", destination: "/drustvo", permanent: true },
+      { source: "/price-iz-zivota/:slug", destination: "/drustvo/:slug", permanent: true },
       { source: "/drame-uz-kafu", destination: "/lifestyle", permanent: true },
       { source: "/drame-uz-kafu/:slug", destination: "/lifestyle/:slug", permanent: true },
       { source: "/smijeh-i-suze", destination: "/lifestyle", permanent: true },
       { source: "/smijeh-i-suze/:slug", destination: "/lifestyle/:slug", permanent: true },
+      // === Komšiluk listing strana → Društvo (pojedinačni /komsiluk/:slug ostaje, ne redirectuje, da bi FB ad članak radio) ===
+      { source: "/komsiluk", destination: "/drustvo", permanent: true },
       // === FB i drugi spoljni izvori sa diakritikom u URL-u → ASCII slug ===
-      { source: "/komšiluk", destination: "/komsiluk", permanent: true },
+      { source: "/komšiluk", destination: "/drustvo", permanent: true },
       { source: "/komšiluk/:slug", destination: "/komsiluk/:slug", permanent: true },
     ];
   },

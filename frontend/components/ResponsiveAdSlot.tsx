@@ -26,6 +26,7 @@ export default function ResponsiveAdSlot() {
 
   return (
     <div className="vti-ad-wrap">
+      <span className="vti-ad-label">Oglas</span>
       <ins
         className="adsbygoogle"
         style={{ display: "inline-block", width: 336, height: 280 }}

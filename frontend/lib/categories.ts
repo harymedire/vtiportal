@@ -1,32 +1,35 @@
 export const CATEGORIES = [
   { name: "Ispovijesti", slug: "ispovijesti" },
-  { name: "Društvo", slug: "komsiluk" },
+  { name: "Društvo", slug: "drustvo" },
   { name: "Lifestyle", slug: "lifestyle" },
 ] as const;
 
 /**
- * Stari slug-ovi koji 301-redirectaju na nove (vidi next.config.mjs).
- * Display name "Društvo" mapira na slug "komsiluk" da ne bi pukle FB
- * reklame i postojeći backlinkovi koji ciljaju /komsiluk/* URL-ove.
+ * Slug "komsiluk" ostaje aktivan SAMO za jedan stari FB ad članak
+ * (srbija-u-soku-bracni-par-iz-novog-sada-...). Nije u navigaciji,
+ * novi članci se generišu kao "Društvo" (slug "drustvo").
  */
 export const LEGACY_CATEGORY_REDIRECTS: Record<string, string> = {
-  "price-iz-zivota": "komsiluk",
+  "price-iz-zivota": "drustvo",
   "drame-uz-kafu": "lifestyle",
   "smijeh-i-suze": "lifestyle",
 };
 
 export const CATEGORY_NAME_TO_SLUG: Record<string, string> = {
   ...Object.fromEntries(CATEGORIES.map((c) => [c.name, c.slug])),
-  // Legacy display imena u DB redovima (dok se ne migrira) — mapirana na nove slug-ove.
+  // Legacy: "Komšiluk" zadržava svoj slug zbog 1 FB ad članka koji ostaje na /komsiluk/...
   "Komšiluk": "komsiluk",
-  "Priče iz života": "komsiluk",
+  // Stara DB display imena (ako poneki red u DB-u još nije migriran)
+  "Priče iz života": "drustvo",
   "Drame uz kafu": "lifestyle",
   "Smijeh i suze": "lifestyle",
 };
 
-export const CATEGORY_SLUG_TO_NAME: Record<string, string> = Object.fromEntries(
-  CATEGORIES.map((c) => [c.slug, c.name])
-);
+export const CATEGORY_SLUG_TO_NAME: Record<string, string> = {
+  ...Object.fromEntries(CATEGORIES.map((c) => [c.slug, c.name])),
+  // Legacy slug "komsiluk" prikazuje se kao "Društvo" u UI (1 FB ad članak)
+  "komsiluk": "Društvo",
+};
 
 export function categoryNameToSlug(name: string): string {
   return CATEGORY_NAME_TO_SLUG[name] || name.toLowerCase();

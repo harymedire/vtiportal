@@ -5,9 +5,10 @@ import AdSlot from "./AdSlot";
 
 type Props = {
   mostRead: ArticleListItem[];
+  latest?: ArticleListItem[];
 };
 
-export default function Sidebar({ mostRead }: Props) {
+export default function Sidebar({ mostRead, latest }: Props) {
   return (
     <aside>
       <AdSlot
@@ -31,6 +32,21 @@ export default function Sidebar({ mostRead }: Props) {
           )}
         </ul>
       </div>
+
+      {latest && latest.length > 0 && (
+        <div className="sidebar-widget">
+          <h3>🆕 Najnovije</h3>
+          <ul>
+            {latest.map((a) => (
+              <li key={a.id}>
+                <Link href={`/${categoryNameToSlug(a.category)}/${a.slug}`}>
+                  {a.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="sticky-ad">
         <AdSlot

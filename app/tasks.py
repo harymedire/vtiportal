@@ -12,10 +12,9 @@ from app.services.database import get_db
 from app.services.claude_service import (
     generate_article,
     generate_image_prompt,
-    extract_overlay_text,
 )
 from app.services.replicate_service import generate_image
-from app.services.image_processor import add_clickbait_overlay, create_thumbnail
+from app.services.image_processor import create_thumbnail
 from app.services.storage_service import upload_image
 from app.services.embedding_service import compute_article_embedding
 from app.services.telegram_service import send_alert, send_digest
@@ -96,10 +95,8 @@ def generate_single_article(self, template_id: int, job_id: str = None) -> dict:
     image_bytes, image_cost = generate_image(image_prompt)
     total_cost += Decimal(str(image_cost))
 
-    # ===== 6. Overlay tekst =====
-    overlay_text = extract_overlay_text(article["title"])
-    logger.info(f"Overlay text: {overlay_text}")
-    final_image = add_clickbait_overlay(image_bytes, overlay_text)
+    # ===== 6. Slika bez overlay teksta — čistiji izgled, bolji AdSense signal =====
+    final_image = image_bytes
     thumb_image = create_thumbnail(final_image)
 
     # ===== 7. Upload =====
