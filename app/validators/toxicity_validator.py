@@ -22,8 +22,8 @@ RED_FLAGS = [
     # Eksplicitno seksualno
     r"\bseksualn(i|o) odnos(a|i)? sa djet",
     r"\bpedofili",
-    # Teške droge
-    r"\bhero(i|in)",
+    # Teške droge (samo bare "heroin" — "heroina"/"heroinom" su dvosmisleni sa "junakinja")
+    r"\bheroin\b",
     r"\bkokain(a|om)",
     r"\bkristal met",
 ]
