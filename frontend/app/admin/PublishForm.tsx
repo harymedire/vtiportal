@@ -351,7 +351,7 @@ export default function PublishForm() {
         placeholder={"Paragraf 1...\n\nParagraf 2...\n\nParagraf 3..."}
       />
       <div style={hintStyle}>
-        Sistem automatski dijeli na stranice (~200 riječi po stranici, max 10 stranica).
+        Sistem automatski dijeli na stranice (~330 riječi po stranici, max 7 stranica).
         Prazan red između paragrafa = novi paragraf.
       </div>
 

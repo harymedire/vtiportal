@@ -8,9 +8,9 @@ const CATEGORIES = [
   "Lifestyle",
 ];
 
-const TARGET_WORDS_PER_PAGE = 200;
+const TARGET_WORDS_PER_PAGE = 330;
 const MIN_PAGES = 3;
-const MAX_PAGES = 10;
+const MAX_PAGES = 7;
 
 type Props = { articleId: string };
 

@@ -6,12 +6,13 @@ export type PaginatedPage = {
 };
 
 /**
- * Auto-paginira tekst članka u stranice target-ovane na ~200 riječi po stranici.
+ * Auto-paginira tekst članka u stranice target-ovane na ~330 riječi po stranici
+ * (uskladjeno sa AdSense quality signal-om i content_validator pragovima 250-420).
  * Poštuje paragraph boundaries (nikad ne siječe paragraf u sredini).
  *
- * - targetWordsPerPage: default 200
+ * - targetWordsPerPage: default 330
  * - minPages: default 3 (kratki članci ne postaju 1-pager)
- * - maxPages: default 10
+ * - maxPages: default 7
  *
  * Ako ima previše paragrafa za max, mergeuje krajnje dvije stranice.
  * Ako je tekst jako kratak, napravi minPages ravnomjerno.
@@ -24,9 +25,9 @@ export function paginateText(
     maxPages?: number;
   } = {}
 ): PaginatedPage[] {
-  const target = options.targetWordsPerPage ?? 200;
+  const target = options.targetWordsPerPage ?? 330;
   const minPages = options.minPages ?? 3;
-  const maxPages = options.maxPages ?? 10;
+  const maxPages = options.maxPages ?? 7;
 
   // Paragrafi = blokovi razdvojeni praznim redom ili linebreak-om
   const paragraphs = body

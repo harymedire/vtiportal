@@ -106,9 +106,9 @@ export async function PUT(
   }
 
   const pages = paginateText(text, {
-    targetWordsPerPage: 200,
+    targetWordsPerPage: 330,
     minPages: 3,
-    maxPages: 10,
+    maxPages: 7,
   });
 
   const supabase = getSupabaseAdmin();
