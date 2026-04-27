@@ -56,7 +56,7 @@ def generate_article(template_id: int, variables: Dict[str, str]) -> Dict[str, A
 
     response = client.messages.create(
         model=settings.CLAUDE_MODEL,
-        max_tokens=4000,
+        max_tokens=8000,
         system=GLOBAL_SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_prompt}],
     )
