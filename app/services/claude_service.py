@@ -94,22 +94,30 @@ def generate_image_prompt(article: Dict[str, Any]) -> str:
     Iz članka izvuci najjaču vizuelnu scenu i napravi engleski image prompt
     optimizovan za Flux.
     """
-    system = """Ti si art director za news portal. Iz članka izvuci najjaču vizuelnu scenu i napravi CINEMATIC prompt za image generator.
+    system = """Ti si art director za news portal. Iz članka izvuci jaku ATMOSFERSKU/SIMBOLIČKU scenu i napravi CINEMATIC prompt za image generator.
 
-PRAVILA:
+KRITIČNO PRAVILO — NEMA LJUDI NA SLICI:
+- NE generiši ljude, lica, ruke, prste, dijelove tijela, siluete osoba
+- Umjesto toga koristi SIMBOLIČKE i OBJEKT-FOKUSIRANE scene koje sugerišu emociju priče:
+  * predmeti (pismo na stolu, ključevi, prazna stolica, šolja kafe, fotografija u okviru, otvoren ormar, vjenčani prsten, cipele uz vrata)
+  * enterijeri (kuhinja u sumrak, dnevna soba sa svjetiljkom, prozor sa kondenzacijom, hodnik sa otvorenim vratima, kuhinjski sto)
+  * eksterijeri (siva ulica, natkriveno dvorište, prazna terasa, snježni park, jesenji prilaz)
+  * detalji (knjiga otvorena, sat na zidu, mokri pločnici, suvi listovi, smračeno nebo, svijeća)
+- Ako tema priče prirodno traži ljude (npr. svadba), prikaži samo predmet kao zamjenu (vjenčanica na vješalici, prazni stolovi sa cvijećem, fotografija na podu)
+
+OSTALA PRAVILA:
 - Output SAMO engleski prompt, bez objašnjenja
-- Ne spominji imena stvarnih osoba
-- Format: "[shot type] of [subject] [action/emotion] in [setting], [lighting], [mood], photorealistic, [camera lens]"
-- Ciljaj na emotivnu, cinematic sliku koja podstiče klik
-- Aspect ratio je 16:9
-- IZBJEGAVAJ: nudity, violence, blood, weapons, children in distress, recognizable celebrity likenesses
+- Format: "[shot type] of [object/scene] in [setting], [lighting], [mood], photorealistic, [camera lens]"
+- Ciljaj emotivnu cinematic kompoziciju koja sugeriše narativ kroz objekte
+- Aspect ratio 16:9
+- IZBJEGAVAJ: nudity, violence, blood, weapons, ALL HUMANS, hands, faces, body parts, silhouettes of people
 """
 
     user = f"""NASLOV: {article['title']}
 PODNASLOV: {article.get('subtitle', '')}
 PRVA STRANICA: {article['pages'][0]['text'][:400]}
 
-Napravi image prompt."""
+Napravi image prompt — BEZ LJUDI, samo objekti/ambijent."""
 
     response = client.messages.create(
         model=settings.CLAUDE_MODEL,
@@ -119,8 +127,8 @@ Napravi image prompt."""
     )
 
     prompt = response.content[0].text.strip()
-    # Dodaj sigurnosne keyword-e i quality boost
-    prompt += ", dramatic lighting, shallow depth of field, professional photography, 85mm lens, cinematic color grading"
+    # Quality boost + ojačanje "bez ljudi" pravila (Flux nema native negative prompt)
+    prompt += ", still life composition, no people, no humans, no hands, no faces, empty scene, dramatic lighting, shallow depth of field, professional photography, 85mm lens, cinematic color grading"
 
     return prompt
 
