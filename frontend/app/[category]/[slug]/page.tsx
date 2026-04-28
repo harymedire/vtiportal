@@ -260,7 +260,7 @@ export default async function ArticlePage({
         )}
       </div>
 
-      <NinaBanner />
+      <NinaBanner variant="vti2" />
 
       {/* === RELATED — samo na zadnjoj stranici === */}
       {isLastPage && related.length > 0 && (

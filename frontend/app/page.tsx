@@ -115,9 +115,12 @@ export default async function HomePage({
           slug="ispovijesti"
           articles={ispovijesti}
         />
+
+        <NinaBanner variant="vti2" />
+
         <CategorySection
           title="Društvo"
-          slug="komsiluk"
+          slug="drustvo"
           articles={komsiluk}
         />
         <CategorySection
