@@ -74,7 +74,7 @@ def generate_single_article(self, template_id: int, job_id: str = None) -> dict:
     article["category"] = TEMPLATES[template_id].category
 
     # ===== 3. Validate content =====
-    valid, errors = validate_content(article)
+    valid, errors = validate_content(article, template_id=template_id)
     if not valid:
         logger.error(f"Content validation failed: {errors}")
         raise ValueError(f"Content invalid: {errors}")

@@ -3,14 +3,18 @@ import re
 from typing import Dict, Any, List, Tuple
 
 
-def validate_content(article: Dict[str, Any]) -> Tuple[bool, List[str]]:
+def validate_content(article: Dict[str, Any], template_id: int = None) -> Tuple[bool, List[str]]:
     """
     Provjerava strukturu članka.
 
     Returns:
         (valid, errors) — valid je False ako ima errora
+
+    Note: T4 (SMS dijalog) ima dijalog format, ne prose — preskačemo word count
+    check za njega jer su poruke prirodno kratke.
     """
     errors = []
+    is_sms_format = template_id == 4
 
     # Obavezna polja
     required_fields = ["title", "subtitle", "category", "tags", "pages", "moral_or_punchline"]
@@ -30,10 +34,16 @@ def validate_content(article: Dict[str, Any]) -> Tuple[bool, List[str]]:
             continue
 
         word_count = len(page["text"].split())
-        if word_count < 240:
-            errors.append(f"Stranica {i} prekratka: {word_count} riječi (min 240)")
-        elif word_count > 420:
-            errors.append(f"Stranica {i} preduga: {word_count} riječi (max 420)")
+        # T4 (SMS dijalog) ima kraće poruke po prirodi formata
+        if not is_sms_format:
+            if word_count < 240:
+                errors.append(f"Stranica {i} prekratka: {word_count} riječi (min 240)")
+            elif word_count > 420:
+                errors.append(f"Stranica {i} preduga: {word_count} riječi (max 420)")
+        else:
+            # SMS: minimalan check da nije skroz prazna
+            if word_count < 50:
+                errors.append(f"Stranica {i} prekratka za SMS format: {word_count} riječi (min 50)")
 
         # Hook na stranicama prije poslednje — soft warning, ne fatalno
         # (Claude povremeno preskoči, ali članak i dalje funkcioniše bez hook-a)
