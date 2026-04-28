@@ -69,6 +69,10 @@ def generate_single_article(self, template_id: int, job_id: str = None) -> dict:
     meta = article.pop("_meta")
     total_cost += Decimal(str(meta["cost_usd"]))
 
+    # Enforce template kategoriju — Claude povremeno bira drugu od ponuđenih
+    from app.prompts import TEMPLATES
+    article["category"] = TEMPLATES[template_id].category
+
     # ===== 3. Validate content =====
     valid, errors = validate_content(article)
     if not valid:
