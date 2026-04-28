@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdSlot from "@/components/AdSlot";
+import SponsorVignetteLoader from "@/components/SponsorVignetteLoader";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vtiportal.com";
 const ADSENSE_CLIENT = "ca-pub-2437073177304126";
@@ -74,6 +75,7 @@ export default function RootLayout({
         <div className="mobile-sticky-ad">
           <AdSlot slot="mobile-sticky" className="ad-box" placeholder="Reklama · 320×50" />
         </div>
+        <SponsorVignetteLoader />
       </body>
     </html>
   );

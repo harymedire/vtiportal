@@ -10,7 +10,7 @@ import { CATEGORIES, categoryNameToSlug } from "@/lib/categories";
 import ArticleCard from "@/components/ArticleCard";
 import Sidebar from "@/components/Sidebar";
 import Pagination from "@/components/Pagination";
-import NinaBanner from "@/components/NinaBanner";
+import SponsorSlot from "@/components/SponsorSlot";
 import type { ArticleListItem } from "@/lib/types";
 
 export const revalidate = 600;
@@ -107,7 +107,7 @@ export default async function HomePage({
         {/* === HERO === */}
         <HeroCard article={hero} />
 
-        <NinaBanner />
+        <SponsorSlot slot="home_hero" />
 
         {/* === SEKCIJE PO KATEGORIJAMA === */}
         <CategorySection
@@ -116,7 +116,7 @@ export default async function HomePage({
           articles={ispovijesti}
         />
 
-        <NinaBanner variant="vti2" />
+        <SponsorSlot slot="home_category" />
 
         <CategorySection
           title="Društvo"

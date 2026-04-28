@@ -8,6 +8,32 @@ import { createClient } from "@supabase/supabase-js";
 type AdminDatabase = {
   public: {
     Tables: {
+      ad_slots: {
+        Row: {
+          id: string;
+          slot_name: string;
+          image_url: string;
+          link_url: string;
+          active: boolean;
+          label: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          slot_name: string;
+          image_url: string;
+          link_url: string;
+          active?: boolean;
+          label?: string | null;
+        };
+        Update: Partial<{
+          slot_name: string;
+          image_url: string;
+          link_url: string;
+          active: boolean;
+          label: string | null;
+        }>;
+      };
       articles: {
         Row: {
           id: string;

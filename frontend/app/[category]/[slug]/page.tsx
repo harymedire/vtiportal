@@ -8,7 +8,7 @@ import {
 } from "@/lib/supabase";
 import ResponsiveAdSlot from "@/components/ResponsiveAdSlot";
 import RelatedArticles from "@/components/RelatedArticles";
-import NinaBanner from "@/components/NinaBanner";
+import SponsorSlot from "@/components/SponsorSlot";
 
 export const revalidate = 3600;
 
@@ -201,7 +201,7 @@ export default async function ArticlePage({
           <p key={`first-${i}`}>{p}</p>
         ))}
 
-        <NinaBanner />
+        <SponsorSlot slot="article_middle" />
 
         {secondHalf.map((p, i) => (
           <p key={`second-${i}`}>{p}</p>
@@ -260,7 +260,7 @@ export default async function ArticlePage({
         )}
       </div>
 
-      <NinaBanner variant="vti2" />
+      <SponsorSlot slot="article_cta_below" />
 
       {/* === RELATED — samo na zadnjoj stranici === */}
       {isLastPage && related.length > 0 && (

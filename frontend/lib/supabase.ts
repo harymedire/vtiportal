@@ -105,6 +105,23 @@ export async function getMostRead(limit = 5): Promise<ArticleListItem[]> {
   return (data || []) as ArticleListItem[];
 }
 
+export type AdSlotEntry = {
+  id: string;
+  image_url: string;
+  link_url: string;
+  label: string | null;
+};
+
+export async function getRandomAdForSlot(slot: string): Promise<AdSlotEntry | null> {
+  const { data, error } = await supabase
+    .from("ad_slots")
+    .select("id,image_url,link_url,label")
+    .eq("slot_name", slot)
+    .eq("active", true);
+  if (error || !data || data.length === 0) return null;
+  return data[Math.floor(Math.random() * data.length)] as AdSlotEntry;
+}
+
 export async function getAllSlugsForSitemap(): Promise<
   { slug: string; category: string; published_at: string }[]
 > {

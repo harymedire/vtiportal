@@ -42,6 +42,21 @@ export default function AdminPage() {
           >
             Svi članci
           </a>
+          <a
+            href="/admin/ads"
+            style={{
+              padding: "8px 14px",
+              background: "#fff",
+              color: "#1a73e8",
+              border: "1px solid #1a73e8",
+              borderRadius: 6,
+              fontSize: 13,
+              textDecoration: "none",
+              fontWeight: 600,
+            }}
+          >
+            Reklame
+          </a>
           <form action="/api/admin/logout" method="POST">
             <button
               type="submit"
