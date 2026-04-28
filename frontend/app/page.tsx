@@ -10,6 +10,7 @@ import { CATEGORIES, categoryNameToSlug } from "@/lib/categories";
 import ArticleCard from "@/components/ArticleCard";
 import Sidebar from "@/components/Sidebar";
 import Pagination from "@/components/Pagination";
+import NinaBanner from "@/components/NinaBanner";
 import type { ArticleListItem } from "@/lib/types";
 
 export const revalidate = 600;
@@ -105,6 +106,8 @@ export default async function HomePage({
       <main>
         {/* === HERO === */}
         <HeroCard article={hero} />
+
+        <NinaBanner />
 
         {/* === SEKCIJE PO KATEGORIJAMA === */}
         <CategorySection

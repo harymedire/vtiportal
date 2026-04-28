@@ -8,6 +8,7 @@ import {
 } from "@/lib/supabase";
 import ResponsiveAdSlot from "@/components/ResponsiveAdSlot";
 import RelatedArticles from "@/components/RelatedArticles";
+import NinaBanner from "@/components/NinaBanner";
 
 export const revalidate = 3600;
 
@@ -118,6 +119,9 @@ export default async function ArticlePage({
   const paragraphs = pageData.text
     .split(/\n\n+|\n/)
     .filter((p) => p.trim());
+  const midPoint = Math.max(1, Math.ceil(paragraphs.length / 2));
+  const firstHalf = paragraphs.slice(0, midPoint);
+  const secondHalf = paragraphs.slice(midPoint);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -193,8 +197,14 @@ export default async function ArticlePage({
       <div
         className={`article-body ${isFirstPage ? "first-page" : ""}`}
       >
-        {paragraphs.map((p, i) => (
-          <p key={i}>{p}</p>
+        {firstHalf.map((p, i) => (
+          <p key={`first-${i}`}>{p}</p>
+        ))}
+
+        <NinaBanner />
+
+        {secondHalf.map((p, i) => (
+          <p key={`second-${i}`}>{p}</p>
         ))}
 
         {!isLastPage && pageData.hook && (
@@ -249,6 +259,8 @@ export default async function ArticlePage({
           </a>
         )}
       </div>
+
+      <NinaBanner />
 
       {/* === RELATED — samo na zadnjoj stranici === */}
       {isLastPage && related.length > 0 && (

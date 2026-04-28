@@ -513,6 +513,34 @@
   display: block;
 }
 
+/* ===== NINA BANNER (sponsor) ===== */
+.nina-banner-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 28px auto;
+  max-width: 100%;
+}
+.nina-banner-link {
+  display: block;
+  width: 100%;
+  max-width: 336px;
+  line-height: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.nina-banner-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+.nina-banner-link img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 288px;
+  object-fit: contain;
+}
+
 /* ===== ARTICLE SINGLE (no sidebar) ===== */
 .article-single {
   max-width: 760px;
