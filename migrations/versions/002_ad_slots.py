@@ -32,8 +32,17 @@ def upgrade():
         "ad_slots",
         ["slot_name", "active"],
     )
+    # Supabase RLS — frontend (anon) sme da čita samo aktivne, admin (service_role) sve
+    op.execute("ALTER TABLE ad_slots ENABLE ROW LEVEL SECURITY")
+    op.execute("CREATE POLICY ad_slots_public_select ON ad_slots FOR SELECT USING (active = true)")
+    op.execute("GRANT SELECT ON ad_slots TO anon")
+    op.execute("GRANT SELECT ON ad_slots TO authenticated")
+    op.execute("GRANT ALL ON ad_slots TO service_role")
+    # Refresh PostgREST schema cache (Supabase REST mora znati novu tabelu)
+    op.execute("NOTIFY pgrst, 'reload schema'")
 
 
 def downgrade():
+    op.execute("DROP POLICY IF EXISTS ad_slots_public_select ON ad_slots")
     op.drop_index("ix_ad_slots_active_slot", table_name="ad_slots")
     op.drop_table("ad_slots")
