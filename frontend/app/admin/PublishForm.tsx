@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import VideoBlock from "@/components/admin/VideoBlock";
 
 const CATEGORIES = [
   "Ispovijesti",
@@ -15,6 +16,8 @@ export default function PublishForm() {
   const [generating, setGenerating] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [imagePrompt, setImagePrompt] = useState("");
+  const [endVideoUrl, setEndVideoUrl] = useState("");
+  const textRef = useRef<HTMLTextAreaElement>(null);
   const [result, setResult] = useState<null | {
     ok: boolean;
     message: string;
@@ -31,6 +34,22 @@ export default function PublishForm() {
     text: "",
     hero_image_url: "",
   });
+
+  function insertAtCursor(marker: string) {
+    setForm((f) => {
+      const ta = textRef.current;
+      const start = ta?.selectionStart ?? f.text.length;
+      const end = ta?.selectionEnd ?? f.text.length;
+      const next = f.text.slice(0, start) + marker + f.text.slice(end);
+      requestAnimationFrame(() => {
+        if (!ta) return;
+        ta.focus();
+        const pos = start + marker.length;
+        ta.setSelectionRange(pos, pos);
+      });
+      return { ...f, text: next };
+    });
+  }
 
   async function handleGenerateImage() {
     const prompt = imagePrompt.trim();
@@ -91,11 +110,16 @@ export default function PublishForm() {
     setLoading(true);
     setResult(null);
 
+    const textWithEnd = endVideoUrl.trim()
+      ? `${form.text.trim()}\n\n[video-kraj: ${endVideoUrl.trim()}]`
+      : form.text;
+
     const res = await fetch("/api/admin/publish", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...form,
+        text: textWithEnd,
         tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
       }),
     });
@@ -120,6 +144,7 @@ export default function PublishForm() {
         text: "",
         hero_image_url: "",
       });
+      setEndVideoUrl("");
     } else {
       setResult({
         ok: false,
@@ -340,10 +365,17 @@ export default function PublishForm() {
         Preporučeno 1280x720 (16:9). Max 10 MB. JPEG/PNG/WebP/GIF.
       </div>
 
+      <VideoBlock
+        onInsertMarker={insertAtCursor}
+        endVideoUrl={endVideoUrl}
+        onChangeEndVideo={setEndVideoUrl}
+      />
+
       <label style={labelStyle}>
         Tekst članka (paragrafi razdvojeni praznim redom)
       </label>
       <textarea
+        ref={textRef}
         style={{ ...inputStyle, minHeight: 400, resize: "vertical", fontFamily: "Georgia, serif", lineHeight: 1.6 }}
         required
         value={form.text}

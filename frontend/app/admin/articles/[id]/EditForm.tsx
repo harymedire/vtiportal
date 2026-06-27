@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import VideoBlock from "@/components/admin/VideoBlock";
+import { extractEndVideo, stripEndVideo } from "@/lib/media";
 
 const CATEGORIES = [
   "Ispovijesti",
@@ -23,6 +25,8 @@ export default function EditForm({ articleId }: Props) {
   const [generating, setGenerating] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [imagePrompt, setImagePrompt] = useState("");
+  const [endVideoUrl, setEndVideoUrl] = useState("");
+  const textRef = useRef<HTMLTextAreaElement>(null);
   const [result, setResult] = useState<null | {
     ok: boolean;
     message: string;
@@ -37,6 +41,22 @@ export default function EditForm({ articleId }: Props) {
     text: "",
     hero_image_url: "",
   });
+
+  function insertAtCursor(marker: string) {
+    setForm((f) => {
+      const ta = textRef.current;
+      const start = ta?.selectionStart ?? f.text.length;
+      const end = ta?.selectionEnd ?? f.text.length;
+      const next = f.text.slice(0, start) + marker + f.text.slice(end);
+      requestAnimationFrame(() => {
+        if (!ta) return;
+        ta.focus();
+        const pos = start + marker.length;
+        ta.setSelectionRange(pos, pos);
+      });
+      return { ...f, text: next };
+    });
+  }
 
   const { wordCount, estimatedPages } = useMemo(() => {
     const words = form.text.split(/\s+/).filter((w) => w.length > 0).length;
@@ -56,13 +76,16 @@ export default function EditForm({ articleId }: Props) {
           setLoadError(data.error || "Greška pri učitavanju članka");
         } else {
           const a = data.article;
+          const rawText = a.text || "";
+          const end = extractEndVideo(rawText);
+          setEndVideoUrl(end || "");
           setForm({
             title: a.title || "",
             subtitle: a.subtitle || "",
             category: a.category || CATEGORIES[0],
             tags: Array.isArray(a.tags) ? a.tags.join(", ") : "",
             moral: a.moral || "",
-            text: a.text || "",
+            text: end ? stripEndVideo(rawText) : rawText,
             hero_image_url: a.hero_image_url || "",
           });
         }
@@ -136,11 +159,16 @@ export default function EditForm({ articleId }: Props) {
     setSaving(true);
     setResult(null);
 
+    const textWithEnd = endVideoUrl.trim()
+      ? `${form.text.trim()}\n\n[video-kraj: ${endVideoUrl.trim()}]`
+      : form.text;
+
     const res = await fetch(`/api/admin/articles/${articleId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...form,
+        text: textWithEnd,
         tags: form.tags
           .split(",")
           .map((t) => t.trim())
@@ -389,8 +417,15 @@ export default function EditForm({ articleId }: Props) {
         )}
       </div>
 
+      <VideoBlock
+        onInsertMarker={insertAtCursor}
+        endVideoUrl={endVideoUrl}
+        onChangeEndVideo={setEndVideoUrl}
+      />
+
       <label style={labelStyle}>Tekst članka</label>
       <textarea
+        ref={textRef}
         style={{
           ...inputStyle,
           minHeight: 420,
