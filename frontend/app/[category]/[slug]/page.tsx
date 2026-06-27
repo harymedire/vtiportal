@@ -9,6 +9,8 @@ import {
 import ResponsiveAdSlot from "@/components/ResponsiveAdSlot";
 import RelatedArticles from "@/components/RelatedArticles";
 import SponsorSlot from "@/components/SponsorSlot";
+import MediaEmbed from "@/components/MediaEmbed";
+import { parseInlineVideo, extractEndVideo, stripEndVideo } from "@/lib/media";
 
 export const revalidate = 3600;
 
@@ -116,12 +118,27 @@ export default async function ArticlePage({
   );
   const readMinutes = Math.max(1, Math.round(totalWords / 220));
 
-  const paragraphs = pageData.text
+  // Video "na kraju" se čuva kao [video-kraj: URL] marker u tekstu —
+  // izvuče se i renderuje posebno ispod pouke, ne kao paragraf.
+  const endVideoUrl = extractEndVideo(pageData.text);
+  const bodyText = endVideoUrl ? stripEndVideo(pageData.text) : pageData.text;
+
+  const paragraphs = bodyText
     .split(/\n\n+|\n/)
     .filter((p) => p.trim());
   const midPoint = Math.max(1, Math.ceil(paragraphs.length / 2));
   const firstHalf = paragraphs.slice(0, midPoint);
   const secondHalf = paragraphs.slice(midPoint);
+
+  // Paragraf koji je čisti [video: URL] marker -> embed; inače običan <p>.
+  const renderBlock = (p: string, key: string) => {
+    const videoUrl = parseInlineVideo(p);
+    return videoUrl ? (
+      <MediaEmbed key={key} url={videoUrl} />
+    ) : (
+      <p key={key}>{p}</p>
+    );
+  };
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -197,15 +214,11 @@ export default async function ArticlePage({
       <div
         className={`article-body ${isFirstPage ? "first-page" : ""}`}
       >
-        {firstHalf.map((p, i) => (
-          <p key={`first-${i}`}>{p}</p>
-        ))}
+        {firstHalf.map((p, i) => renderBlock(p, `first-${i}`))}
 
         <SponsorSlot slot="article_middle" />
 
-        {secondHalf.map((p, i) => (
-          <p key={`second-${i}`}>{p}</p>
-        ))}
+        {secondHalf.map((p, i) => renderBlock(p, `second-${i}`))}
 
         {!isLastPage && pageData.hook && (
           <div className="slide-hook">📌 {pageData.hook}</div>
@@ -217,6 +230,8 @@ export default async function ArticlePage({
             {article.moral}
           </div>
         )}
+
+        {isLastPage && endVideoUrl && <MediaEmbed url={endVideoUrl} />}
 
         {isLastPage && (
           <p

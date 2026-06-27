@@ -4,21 +4,30 @@ import { getAdminSessionFromCookies } from "@/lib/admin";
 import { uploadToR2 } from "@/lib/r2";
 
 export const runtime = "nodejs";
-export const maxDuration = 30;
+export const maxDuration = 60;
 
-const ALLOWED_MIME = new Set([
+const IMAGE_MIME = new Set([
   "image/jpeg",
   "image/png",
   "image/webp",
   "image/gif",
 ]);
-const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
+const VIDEO_MIME = new Set([
+  "video/mp4",
+  "video/webm",
+  "video/quicktime",
+]);
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10 MB
+const MAX_VIDEO_BYTES = 80 * 1024 * 1024; // 80 MB
 
 function extForMime(mime: string): string {
   if (mime === "image/jpeg") return "jpg";
   if (mime === "image/png") return "png";
   if (mime === "image/webp") return "webp";
   if (mime === "image/gif") return "gif";
+  if (mime === "video/mp4") return "mp4";
+  if (mime === "video/webm") return "webm";
+  if (mime === "video/quicktime") return "mov";
   return "bin";
 }
 
@@ -61,29 +70,41 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (!ALLOWED_MIME.has(file.type)) {
+  const isImage = IMAGE_MIME.has(file.type);
+  const isVideo = VIDEO_MIME.has(file.type);
+
+  if (!isImage && !isVideo) {
     return NextResponse.json(
-      { error: `Nepodržan tip ${file.type}. Koristi JPEG/PNG/WebP/GIF.` },
+      {
+        error: `Nepodržan tip ${file.type}. Koristi JPEG/PNG/WebP/GIF ili MP4/WebM/MOV.`,
+      },
       { status: 400 }
     );
   }
 
-  if (file.size > MAX_BYTES) {
+  const maxBytes = isVideo ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
+  if (file.size > maxBytes) {
     return NextResponse.json(
       {
-        error: `Fajl prevelik (${Math.round(file.size / 1024 / 1024)} MB). Max 10 MB.`,
+        error: `Fajl prevelik (${Math.round(file.size / 1024 / 1024)} MB). Max ${Math.round(maxBytes / 1024 / 1024)} MB.`,
       },
       { status: 400 }
     );
   }
 
   const ext = extForMime(file.type);
-  const key = `admin-uploads/${new Date().toISOString().slice(0, 7)}/${randomUUID()}.${ext}`;
+  const folder = isVideo ? "admin-videos" : "admin-uploads";
+  const key = `${folder}/${new Date().toISOString().slice(0, 7)}/${randomUUID()}.${ext}`;
 
   try {
     const bytes = Buffer.from(await file.arrayBuffer());
     const url = await uploadToR2(key, bytes, file.type);
-    return NextResponse.json({ ok: true, url, key });
+    return NextResponse.json({
+      ok: true,
+      url,
+      key,
+      kind: isVideo ? "video" : "image",
+    });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     return NextResponse.json(
