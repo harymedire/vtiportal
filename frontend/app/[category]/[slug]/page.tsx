@@ -216,7 +216,7 @@ export default async function ArticlePage({
       >
         {firstHalf.map((p, i) => renderBlock(p, `first-${i}`))}
 
-        <SponsorSlot slot="article_middle" />
+        <SponsorSlot slot="article_middle" fallbackVariant={null} />
 
         {secondHalf.map((p, i) => renderBlock(p, `second-${i}`))}
 
@@ -275,7 +275,7 @@ export default async function ArticlePage({
         )}
       </div>
 
-      <SponsorSlot slot="article_cta_below" />
+      <SponsorSlot slot="article_cta_below" fallbackVariant={null} />
 
       {/* === RELATED — samo na zadnjoj stranici === */}
       {isLastPage && related.length > 0 && (

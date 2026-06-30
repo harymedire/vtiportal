@@ -107,7 +107,7 @@ export default async function HomePage({
         {/* === HERO === */}
         <HeroCard article={hero} />
 
-        <SponsorSlot slot="home_hero" />
+        <SponsorSlot slot="home_hero" fallbackVariant={null} />
 
         {/* === SEKCIJE PO KATEGORIJAMA === */}
         <CategorySection
@@ -116,7 +116,7 @@ export default async function HomePage({
           articles={ispovijesti}
         />
 
-        <SponsorSlot slot="home_category" />
+        <SponsorSlot slot="home_category" fallbackVariant={null} />
 
         <CategorySection
           title="Društvo"
