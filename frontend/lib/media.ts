@@ -5,9 +5,17 @@
 // End marker (renderuje se na zadnjoj stranici ispod pouke):
 //   [video-kraj: https://...]
 //
-// URL se auto-prepoznaje: YouTube / TikTok / Instagram / direktan video fajl (MP4/WebM/MOV).
+// URL se auto-prepoznaje: YouTube / TikTok / Instagram / Facebook / X (Twitter)
+// / direktan video fajl (MP4/WebM/MOV).
 
-export type MediaKind = "youtube" | "tiktok" | "instagram" | "video" | "unknown";
+export type MediaKind =
+  | "youtube"
+  | "tiktok"
+  | "instagram"
+  | "facebook"
+  | "twitter"
+  | "video"
+  | "unknown";
 
 export type DetectedMedia = {
   kind: MediaKind;
@@ -67,6 +75,17 @@ function extractInstagramPath(url: string): string | null {
   return `${kind}/${m[2]}`;
 }
 
+function isFacebookReel(url: string): boolean {
+  // /reel/ID ili novi share format /share/r/CODE
+  return /facebook\.com\/(reel|reels)\//i.test(url) || /\/share\/r\//i.test(url);
+}
+
+function extractTweetId(url: string): string | null {
+  // twitter.com/USER/status/ID  ·  x.com/USER/status/ID  (i /statuses/ID)
+  const m = url.match(/(?:twitter|x)\.com\/[^/]+\/status(?:es)?\/(\d{6,})/i);
+  return m ? m[1] : null;
+}
+
 /** Prepoznaj izvor iz URL-a i izračunaj spreman embed src. */
 export function detectMedia(rawUrl: string): DetectedMedia {
   const url = rawUrl.trim();
@@ -98,6 +117,22 @@ export function detectMedia(rawUrl: string): DetectedMedia {
       embedUrl: path ? `https://www.instagram.com/${path}/embed` : null,
       aspect: "9:16",
     };
+  }
+  if (/facebook\.com|fb\.watch|fb\.com/i.test(url)) {
+    // Facebook video plugin prima cijeli URL kao href (video + reels + watch).
+    return {
+      kind: "facebook",
+      url,
+      embedUrl: `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(
+        url
+      )}&show_text=false`,
+      aspect: isFacebookReel(url) ? "9:16" : "16:9",
+    };
+  }
+  if (/(?:twitter|x)\.com/i.test(url)) {
+    const id = extractTweetId(url);
+    // X koristi zvanični widget (vidi TweetEmbed) — embedUrl je sam URL ako ID postoji.
+    return { kind: "twitter", url, embedUrl: id ? url : null, aspect: "16:9" };
   }
   if (/\.(mp4|webm|mov|m4v)(\?|#|$)/i.test(url)) {
     return { kind: "video", url, embedUrl: url, aspect: "16:9" };

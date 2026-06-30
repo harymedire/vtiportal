@@ -1,11 +1,18 @@
 import { detectMedia } from "@/lib/media";
+import TweetEmbed from "./TweetEmbed";
 
 type Props = { url: string };
 
 // Renderuje video iz markera u tekstu članka.
-// YouTube / TikTok / Instagram -> responzivan iframe; direktan fajl -> <video>.
+// YouTube / TikTok / Instagram / Facebook -> responzivan iframe;
+// X (Twitter) -> zvanični widget; direktan fajl -> <video>.
 export default function MediaEmbed({ url }: Props) {
   const media = detectMedia(url);
+
+  // X (Twitter) — zvanični widget (auto-visina, podržava video)
+  if (media.kind === "twitter" && media.embedUrl) {
+    return <TweetEmbed url={media.url} />;
+  }
 
   // Direktan video fajl (MP4/WebM/MOV) — npr. upload na R2
   if (media.kind === "video") {

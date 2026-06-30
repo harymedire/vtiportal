@@ -82,7 +82,9 @@ export default function VideoBlock({
 
   return (
     <>
-      <label style={labelStyle}>Video (YouTube / TikTok / Instagram / MP4)</label>
+      <label style={labelStyle}>
+        Video (YouTube / TikTok / Instagram / Facebook / X / MP4)
+      </label>
       <div
         style={{
           border: "1px dashed #ccc",
@@ -93,7 +95,7 @@ export default function VideoBlock({
         }}
       >
         <div style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>
-          Zalijepi link (YouTube / TikTok / Instagram):
+          Zalijepi link (YouTube / TikTok / Instagram / Facebook / X):
         </div>
         <input
           style={{
@@ -107,7 +109,7 @@ export default function VideoBlock({
           type="url"
           value={staged}
           onChange={(e) => setStaged(e.target.value)}
-          placeholder="https://www.youtube.com/watch?v=…  ·  https://www.tiktok.com/…  ·  https://www.instagram.com/reel/…"
+          placeholder="https://youtube.com/…  ·  tiktok.com/…  ·  instagram.com/reel/…  ·  facebook.com/reel/…  ·  x.com/…/status/…"
         />
 
         <div style={{ fontSize: 12, color: "#888", margin: "10px 0 4px" }}>
@@ -138,7 +140,7 @@ export default function VideoBlock({
             ) : (
               <div style={{ color: "#d00", fontSize: 13, marginBottom: 8 }}>
                 ⚠️ Ne prepoznajem izvor ovog linka. Podržano: YouTube, TikTok,
-                Instagram, ili direktan .mp4/.webm/.mov.
+                Instagram, Facebook, X (Twitter), ili direktan .mp4/.webm/.mov.
               </div>
             )}
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
